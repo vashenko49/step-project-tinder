@@ -17,16 +17,16 @@ const outerTheme = createMuiTheme({
 });
 
 ReactDOM.render(
-        <ThemeProvider theme={outerTheme}>
-            <Provider store={configureStore()}>
-                <BrowserRouter basename={"/step_project_tinder/"}>
-                    <Header/>
-                    <Switch>
-                        <Routing/>
-                    </Switch>
-                </BrowserRouter>
-            </Provider>
-        </ThemeProvider>
+    <ThemeProvider theme={outerTheme}>
+        <Provider store={configureStore()}>
+            <BrowserRouter basename={"/step_project_tinder/"}>
+                <Header/>
+                <Switch>
+                    <Routing/>
+                </Switch>
+            </BrowserRouter>
+        </Provider>
+    </ThemeProvider>
     ,
     document.getElementById('root')
 );

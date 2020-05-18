@@ -1,6 +1,7 @@
 package com.tinder.dataSource;
 
 import com.tinder.exception.ConfigFileException;
+import com.tinder.start.ConfigFile;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

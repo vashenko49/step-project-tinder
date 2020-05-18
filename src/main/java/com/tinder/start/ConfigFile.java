@@ -1,4 +1,4 @@
-package com.tinder.dataSource;
+package com.tinder.start;
 
 
 import com.tinder.exception.ConfigFileException;
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public final class ConfigFile {
+
     private static volatile ConfigFile CONFIG_FILE;
     private static Object mutex = new Object();
     private final Map<String, String> configMap;
@@ -36,9 +37,8 @@ public final class ConfigFile {
                 configMap.put(key.toString(), value.toString());
             });
 
-            System.out.println();
         } catch (IOException ex) {
-            throw new ConfigFileException("Error load config file");
+           throw new ConfigFileException("Error load config file");
         }
     }
 

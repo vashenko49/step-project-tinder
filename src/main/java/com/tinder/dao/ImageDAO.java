@@ -1,14 +1,16 @@
 package com.tinder.dao;
 
-import java.io.File;
-import java.util.List;
+import com.tinder.exception.ImageException;
+
+import java.util.UUID;
+
 
 public interface ImageDAO {
-    String uploadImage(File file);
+    String uploadImgUseUri(String uri) throws  ImageException;
 
-    boolean dropImage(String url);
+    boolean dropImgByPublicId(String publicId) throws ImageException;
 
-    List<String> uploadImages(List<File> files);
+    boolean saveImgUrlInDataBaseByUserID(UUID userId, String publicId) throws ImageException;
 
-    List<Boolean> dropImages(List<File> files);
+    boolean dropImgUrlFromDataBaseByUserID(String publicId) throws ImageException;
 }

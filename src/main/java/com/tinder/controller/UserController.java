@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/api/v0/users")
+@WebServlet(urlPatterns = "/api/v0/users")
 public class UserController extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final PrintWriter writer = resp.getWriter();
-        writer.println("hello");
+        writer.println("hellowww");
     }
 }

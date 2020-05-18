@@ -1,10 +1,10 @@
-package com.tinder.dataSource;
+package com.tinder.start;
 
 import com.tinder.exception.ConfigFileException;
 import com.tinder.exception.ErrorConnectionToDataBase;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-public final class ConnectionPool {
+public final class DataSource {
     private static volatile BasicDataSource dataSource;
     private static final Object mutex = new Object();
 
@@ -14,6 +14,7 @@ public final class ConnectionPool {
                 try {
                     ConfigFile configFile = ConfigFile.getInstance();
                     BasicDataSource ds = new BasicDataSource();
+                    ds.setDriverClassName("org.postgresql.Driver");
                     ds.setUrl(configFile.getValueByKey("db.url"));
                     ds.setUsername(configFile.getValueByKey("db.user"));
                     ds.setPassword(configFile.getValueByKey("db.password"));
@@ -22,6 +23,7 @@ public final class ConnectionPool {
                     ds.setMaxOpenPreparedStatements(100);
                     dataSource = ds;
                 } catch (ConfigFileException e) {
+                    e.printStackTrace();
                     throw new ErrorConnectionToDataBase("Error  prepared to connection to data base ;" + e.getMessage());
                 }
 
