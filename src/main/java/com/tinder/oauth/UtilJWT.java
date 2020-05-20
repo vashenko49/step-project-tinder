@@ -1,12 +1,15 @@
 package com.tinder.oauth;
 
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.tinder.defaultImplementation.UserDefault;
 import com.tinder.exception.ConfigFileException;
 import com.tinder.start.ConfigFile;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.SignatureException;
 
 
 import javax.crypto.spec.SecretKeySpec;
@@ -54,17 +57,13 @@ public final class UtilJWT {
                 .compact();
     }
 
-    public boolean verifyToken(String jwt) {
+    public boolean verifyToken(String jwt)throws SignatureException, ExpiredJwtException {
         final Claims body = Jwts.parserBuilder().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY)).build().parseClaimsJws(jwt).getBody();
-        if (body.getExpiration().after(new Date())) {
-            return true;
-        }
-        return false;
+        return body.getExpiration().after(new Date());
     }
 
     public String getUserFromToken(String jwt) {
         final Claims body = Jwts.parserBuilder().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY)).build().parseClaimsJws(jwt).getBody();
-
         if (body.getExpiration().after(new Date())) {
             return body.getSubject();
         }

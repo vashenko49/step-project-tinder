@@ -2,6 +2,7 @@ package com.tinder.defaultImplementation;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.google.common.io.ByteStreams;
 import com.tinder.dao.ImageDAO;
 import com.tinder.exception.ConfigFileException;
 import com.tinder.exception.ErrorConnectionToDataBase;
@@ -11,13 +12,15 @@ import com.tinder.start.ConfigFile;
 import com.tinder.start.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import java.io.IOException;
+import javax.servlet.http.Part;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.UUID;
+import java.text.ParseException;
+import java.util.*;
 
 
 public final class ImageDefault implements ImageDAO {
@@ -56,6 +59,17 @@ public final class ImageDefault implements ImageDAO {
     }
 
     @Override
+    public String uploadImg(Part file) throws ImageException {
+        try {
+            final Map upload = cloudinary.uploader().uploadLarge(file.getInputStream(), ObjectUtils.asMap("folder", "tinder", "format", "jpg"));
+            return (String) upload.get("public_id");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ImageException("Error upload img to cloudinary");
+        }
+    }
+
+    @Override
     public boolean dropImgByPublicId(String publicId) throws ImageException {
         try {
             final Map destroy = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
@@ -82,7 +96,7 @@ public final class ImageDefault implements ImageDAO {
     }
 
     @Override
-    public boolean dropImgUrlFromDataBaseByUserID(String publicId) throws ImageException {
+    public boolean dropImgUrlFromDataBaseByPublicId(String publicId) throws ImageException {
         String sql = "delete from images_account where img_url=?";
         try (
                 final Connection connection = basicDataSource.getConnection();

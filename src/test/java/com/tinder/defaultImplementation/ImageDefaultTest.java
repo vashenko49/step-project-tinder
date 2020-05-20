@@ -28,7 +28,7 @@ public class ImageDefaultTest {
 
         final boolean isSavePublicId = IMAGE_DEFAULT.saveImgUrlInDataBaseByUserID(userFromGoogle, publicId);
         assertThat(isSavePublicId).isTrue();
-        final boolean isDropPublicId = IMAGE_DEFAULT.dropImgUrlFromDataBaseByUserID(publicId);
+        final boolean isDropPublicId = IMAGE_DEFAULT.dropImgUrlFromDataBaseByPublicId(publicId);
         assertThat(isDropPublicId).isTrue();
 
         final boolean b = IMAGE_DEFAULT.dropImgByPublicId(publicId);

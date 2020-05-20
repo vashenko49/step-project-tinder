@@ -11,6 +11,15 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import ImageUploader from 'react-images-upload';
+import Oauth from '../../util/Oauth';
+import {bindActionCreators} from "redux";
+import * as UserAction from "../../actions/User/User.js";
+import {connect} from "react-redux";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import IconButton from "@material-ui/core/IconButton";
+import {Visibility, VisibilityOff} from "@material-ui/icons";
+import {objectToFormData} from 'object-to-formdata';
+import * as SystemAction from "../../actions/System/System";
 
 const useStyles = makeStyles({
     root: {
@@ -30,7 +39,7 @@ const useStyles = makeStyles({
     }
 });
 
-const SingUp = () => {
+const SingUp = ({signUpUser, startLoad, history}) => {
     const classes = useStyles();
     const [name, setName] = useState("");
     const [nameError, setNameError] = useState(false);
@@ -41,11 +50,16 @@ const SingUp = () => {
     const [pictures, setPictures] = useState([]);
     const [errorPictures, setErrorPictures] = useState(false)
 
-    const validateEmail = emailVal => {
-        // eslint-disable-next-line
-        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(emailVal).toLowerCase());
+    const [password, setPassword] = useState("");
+    const [passwordError, setPasswordError] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const handleMouseDownPassword = e => e.preventDefault();
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
     }
+
+    const validateEmail = Oauth.validateEmail;
     const onDrop = (pictureFiles) => {
         setPictures(pictureFiles);
         setErrorPictures(false);
@@ -65,8 +79,25 @@ const SingUp = () => {
         if (!validPicture) {
             setErrorPictures(true);
         }
-        if (validPicture && validName && validEmail) {
-            console.log("submit");
+        let validPassword = password.length > 4;
+        if (!validPassword) {
+            setPasswordError(true);
+        }
+        if (validPicture && validName && validEmail && validPassword) {
+            const options = {
+                indices: true,
+                nullsAsUndefineds: true
+            };
+            const formData = objectToFormData({
+                email: email,
+                password: password,
+                firstName: name,
+                img: pictures[0]
+            }, options);
+
+            signUpUser(formData, () => {
+                history.push("/")
+            });
         }
     }
     return (
@@ -76,15 +107,15 @@ const SingUp = () => {
                     <Typography variant={"h5"}>
                         Create your account
                     </Typography>
-                    <Button className={classes.googleButton} component={Link} fullWidth={true}
-                            href={'https://accounts.google.com/o/oauth2/auth?scope=profile email&response_type=code&access_type=offline&redirect_uri=http://localhost:8080/api/v0/google&client_id=206183164477-qeh7n71mhlf4au9f236fc1i8tr62r080.apps.googleusercontent.com'}
+                    <Button onClick={startLoad} className={classes.googleButton} component={Link} fullWidth={true}
+                            href={'https://accounts.google.com/o/oauth2/auth?scope=profile email&response_type=code&access_type=offline&redirect_uri=http://localhost:8080/api/v0/google-sign-up&client_id=206183164477-qeh7n71mhlf4au9f236fc1i8tr62r080.apps.googleusercontent.com'}
                             variant="contained" color="primary">
                         Sing Up with Google
                     </Button>
                     <form onSubmit={onSubmit} className={classes.formSingUp} noValidate={false} autoComplete="off">
                         <FormControl variant="outlined" className={classes.formControl} fullWidth={true}
                                      error={emailError}>
-                            <InputLabel htmlFor={"enter-email"}>Enter name</InputLabel>
+                            <InputLabel htmlFor={"enter-email"}>Enter email</InputLabel>
                             <Input
 
                                 id={"enter-email"}
@@ -122,14 +153,40 @@ const SingUp = () => {
                                 fileSizeError={"File size is too big"}
                                 fileTypeError={"Is not supported file extension"}
                                 onChange={onDrop}
-                                imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                                maxFileSize={5242880}
+                                imgExtension={['.jpg', '.png', '.gif']}
+                                maxFileSize={9242880}
                                 singleImage={true}
                             />
                             <FormHelperText
                                 id={"enter-name-helper"}>{errorPictures && "Avatar is require"}</FormHelperText>
                         </FormControl>
-
+                        <FormControl variant="outlined" className={classes.formControl} fullWidth={true}
+                                     error={passwordError}>
+                            <InputLabel htmlFor={"enter-password"}>Enter password</InputLabel>
+                            <Input
+                                id={"enter-password"}
+                                value={password}
+                                onChange={e => {
+                                    setPassword(e.target.value);
+                                    setPasswordError(false)
+                                }}
+                                aria-describedby={"enter-password-helper"}
+                                type={showPassword ? 'text' : 'password'}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <Visibility/> : <VisibilityOff/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                            <FormHelperText
+                                id={"enter-password-helper"}>{passwordError && "Password is require"}</FormHelperText>
+                        </FormControl>
                         <Button type={"submit"} fullWidth={true} variant="contained" color="primary">Sing Up</Button>
                     </form>
                 </CardContent>
@@ -138,4 +195,12 @@ const SingUp = () => {
     );
 };
 
-export default SingUp;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        startLoad: bindActionCreators(SystemAction.startLoad, dispatch),
+        signUpUser: bindActionCreators(UserAction.signUpUser, dispatch)
+    };
+}
+
+
+export default connect(null, mapDispatchToProps)(SingUp);

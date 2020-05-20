@@ -1,23 +1,24 @@
 package com.tinder.dao;
 
+import com.tinder.exception.ImageException;
 import com.tinder.exception.UserException;
-import com.tinder.model.AccountTinder;
+import com.tinder.model.AccountUser;
+import javafx.util.Pair;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserDAO {
-    UUID createUserFromForm(AccountTinder accountTinder);
+    UUID createUserFromForm(String email, String password, String firstName) throws UserException;
 
     UUID createUserFromGoogle(String firstName, String email) throws UserException;
 
-    boolean editUser(AccountTinder accountTinder);
-
     boolean dropUser(UUID userID) throws UserException;
 
-    AccountTinder getUserData(String email);
-
-    List<AccountTinder> getListUsersByUser(AccountTinder accountTinder);
-
     boolean userExistByEmail(String email) throws UserException;
+
+    UUID getUserUUIDByEmail(String email) throws UserException;
+
+    AccountUser getUserDataByUserId(UUID userId) throws UserException, ImageException;
+
+    Pair<String, String> getUserIdAndPasswordByEmail(String email) throws UserException;
 }

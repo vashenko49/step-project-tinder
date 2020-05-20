@@ -8,6 +8,9 @@ import configureStore from './store/index';
 import './index.css';
 import Routing from "./components/Routing/Routing";
 import Header from "./components/Header/Header";
+import {SnackbarProvider} from 'notistack';
+import Notifier from "./components/Notifier/Notifier";
+import Loader from "./components/Loader/Loader";
 
 const outerTheme = createMuiTheme({
     palette: {
@@ -19,12 +22,16 @@ const outerTheme = createMuiTheme({
 ReactDOM.render(
     <ThemeProvider theme={outerTheme}>
         <Provider store={configureStore()}>
-            <BrowserRouter basename={"/step_project_tinder/"}>
-                <Header/>
-                <Switch>
-                    <Routing/>
-                </Switch>
-            </BrowserRouter>
+            <SnackbarProvider>
+                <BrowserRouter>
+                    <Header/>
+                    <Switch>
+                        <Routing/>
+                    </Switch>
+                    <Notifier/>
+                    <Loader/>
+                </BrowserRouter>
+            </SnackbarProvider>
         </Provider>
     </ThemeProvider>
     ,

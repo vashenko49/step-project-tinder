@@ -1,15 +1,12 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as UserAction from '../../actions/User/User';
-import _ from "lodash";
+import * as SystemAction from '../../actions/System/System';
 
-const urlParams = new URLSearchParams(window.location.search);
 const HomePage = () => {
-    _.isString(urlParams.get("oauth")) && (document.cookie = "oauth=" + urlParams.get("oauth"));
     return (
         <div>
-
+5
         </div>
     );
 };
@@ -21,7 +18,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        logIn: bindActionCreators(UserAction.logIn, dispatch)
+        startLoad: bindActionCreators(SystemAction.startLoad, dispatch)
     };
 }
 
