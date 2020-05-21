@@ -157,6 +157,7 @@ public final class UserDefault implements UserDAO {
                         .age(resultSet.getInt("age"))
                         .interests(resultSet.getString("interests"))
                         .gender(resultSet.getString("gender"))
+                        .genderpartner(resultSet.getString("genderpartner"))
                         .aboutMe(resultSet.getString("aboutMe"))
                         .max_distance(resultSet.getInt("max_distance"))
                         .max_age(resultSet.getInt("max_age"))

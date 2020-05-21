@@ -17,6 +17,10 @@ import {bindActionCreators} from "redux";
 import _ from 'lodash';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Button from "@material-ui/core/Button";
+import AddIcon from '@material-ui/icons/Add';
+import {Link} from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
+import {Image} from 'cloudinary-react';
 
 const urlParams = new URLSearchParams(window.location.search);
 const useStyles = makeStyles((theme) => ({
@@ -44,13 +48,13 @@ const useStyles = makeStyles((theme) => ({
     mainLink: {
         color: "white"
     },
-    signOut:{
+    signOut: {
         color: "white",
-        marginLeft:"10px"
+        marginLeft: "10px"
     }
 }));
 
-const Header = ({User: {isAuthorization, unReadMessage}, getUserDataByJWT, SignOut}) => {
+const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserDataByJWT, SignOut}) => {
     useEffect(() => {
         if (_.isString(urlParams.get("oauth"))) {
             document.cookie = "oauth=" + urlParams.get("oauth");
@@ -78,37 +82,78 @@ const Header = ({User: {isAuthorization, unReadMessage}, getUserDataByJWT, SignO
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton aria-label="show new mails" color="inherit">
-                    <Badge badgeContent={unReadMessage} color="secondary">
-                        <MailIcon/>
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle/>
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
-            <MenuItem >
-                <IconButton
-                    onClick={SignOut}
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <ExitToAppIcon/>
-                </IconButton>
-                <p>Sign out</p>
-            </MenuItem>
+            {
+                isAuthorization ?
+                    (
+                        [
+                            <MenuItem component={Link}
+                                      to="/personal-cabinet" key={"profile"}>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="primary-search-account-menu"
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                >
+                                    {imagesList.length > 0 ? <Avatar component={Image} publicId={imagesList[0]}/> :
+                                        <AccountCircle/>}
+                                </IconButton>
+                                <p>Profile</p>
+                            </MenuItem>,
+                            <MenuItem key={"messages"}>
+                                <IconButton aria-label="show new mails" color="inherit">
+                                    <Badge badgeContent={unReadMessage} color="secondary">
+                                        <MailIcon/>
+                                    </Badge>
+                                </IconButton>
+                                <p>Messages</p>
+                            </MenuItem>,
+                            <MenuItem onClick={SignOut} key={"sign-out"}>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="primary-search-account-menu"
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                >
+                                    <ExitToAppIcon/>
+                                </IconButton>
+                                <p>Sign out</p>
+                            </MenuItem>
+                        ]
+                    ) :
+                    (
+                        [
+                            <MenuItem
+                                component={Link}
+                                to="/sing-in"
+                                key={"sign-in"}>
+                                <IconButton
+
+                                    aria-label="show new mails"
+                                    color="inherit">
+                                    <Badge badgeContent={unReadMessage} color="secondary">
+                                        <ExitToAppIcon/>
+                                    </Badge>
+                                </IconButton>
+                                <p>Sign In</p>
+                            </MenuItem>,
+                            <MenuItem
+                                component={Link}
+                                to="/sing-up"
+                                key={"sign-up"}>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="primary-search-account-menu"
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                >
+                                    <AddIcon/>
+                                </IconButton>
+                                <p>Sign Up</p>
+                            </MenuItem>
+                        ]
+                    )
+            }
+
         </Menu>
     );
 
@@ -127,12 +172,15 @@ const Header = ({User: {isAuthorization, unReadMessage}, getUserDataByJWT, SignO
                             isAuthorization ? (
                                 <>
                                     <IconButton
+                                        component={Link}
+                                        to="/personal-cabinet"
                                         edge="end"
                                         aria-label="account of current user"
                                         aria-haspopup="true"
                                         color="inherit"
                                     >
-                                        <AccountCircle/>
+                                        {imagesList.length > 0 ? <Avatar component={Image} publicId={imagesList[0]}/> :
+                                            <AccountCircle/>}
                                     </IconButton>
                                     <Button onClick={SignOut} className={classes.signOut}>
                                         <Typography variant="button">

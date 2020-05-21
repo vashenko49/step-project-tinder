@@ -11,6 +11,7 @@ import Header from "./components/Header/Header";
 import {SnackbarProvider} from 'notistack';
 import Notifier from "./components/Notifier/Notifier";
 import Loader from "./components/Loader/Loader";
+import {CloudinaryContext} from "cloudinary-react";
 
 const outerTheme = createMuiTheme({
     palette: {
@@ -22,16 +23,18 @@ const outerTheme = createMuiTheme({
 ReactDOM.render(
     <ThemeProvider theme={outerTheme}>
         <Provider store={configureStore()}>
-            <SnackbarProvider>
-                <BrowserRouter>
-                    <Header/>
-                    <Switch>
-                        <Routing/>
-                    </Switch>
-                    <Notifier/>
-                    <Loader/>
-                </BrowserRouter>
-            </SnackbarProvider>
+            <CloudinaryContext cloudName={"dxge5r7h2"}>
+                <SnackbarProvider>
+                    <BrowserRouter>
+                        <Header/>
+                        <Switch>
+                            <Routing/>
+                        </Switch>
+                        <Notifier/>
+                        <Loader/>
+                    </BrowserRouter>
+                </SnackbarProvider>
+            </CloudinaryContext>
         </Provider>
     </ThemeProvider>
     ,

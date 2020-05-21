@@ -13,6 +13,8 @@ export const getUserDataByJWT = () => dispatch => {
             type: SYSTEM.START_LOAD
         })
         ServiceUserAPI.getUserDataBYJWT().then(res => {
+
+            console.log(res);
             dispatch({
                 type: USER.GET_USER_DATA_BY_JWT_SUCCESS,
                 payload: res
