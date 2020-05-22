@@ -8,6 +8,7 @@ import com.tinder.exception.ImageException;
 import com.tinder.exception.UserException;
 import com.tinder.model.Error;
 import com.tinder.service.UserService;
+import com.tinder.util.ControllerUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -44,9 +45,9 @@ public class LoginController extends HttpServlet {
         try {
             final UserService USER_SERVICE = UserService.getInstance();
             Part filePart = req.getPart("img");
-            final String email = convertInputStreamToString(req.getPart("email").getInputStream());
-            final String password = convertInputStreamToString(req.getPart("password").getInputStream());
-            final String firstName = convertInputStreamToString(req.getPart("firstName").getInputStream());
+            final String email = ControllerUtil.convertInputStreamToString(req.getPart("email").getInputStream());
+            final String password = ControllerUtil.convertInputStreamToString(req.getPart("password").getInputStream());
+            final String firstName = ControllerUtil.convertInputStreamToString(req.getPart("firstName").getInputStream());
 
             if (USER_SERVICE.userExistByEmail(email)) {
                 resp.setStatus(401);
@@ -70,8 +71,8 @@ public class LoginController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             final UserService USER_SERVICE = UserService.getInstance();
-            final String email = convertInputStreamToString(req.getPart("email").getInputStream());
-            final String password = convertInputStreamToString(req.getPart("password").getInputStream());
+            final String email = ControllerUtil.convertInputStreamToString(req.getPart("email").getInputStream());
+            final String password = ControllerUtil.convertInputStreamToString(req.getPart("password").getInputStream());
 
             final boolean isExistUser = USER_SERVICE.userExistByEmail(email);
 
@@ -98,18 +99,5 @@ public class LoginController extends HttpServlet {
         }
     }
 
-
-    private String convertInputStreamToString(InputStream inputStream) throws IOException {
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-
-        return result.toString(StandardCharsets.UTF_8.name());
-
-    }
 
 }

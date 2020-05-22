@@ -14,6 +14,7 @@ import javafx.util.Pair;
 import javax.servlet.http.Part;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Map;
 import java.util.UUID;
 
 public class UserService {
@@ -63,4 +64,26 @@ public class UserService {
         return "";
     }
 
+    public AccountUser editUserData(Map newData, UUID userId) throws UserException {
+        return USER_DEFAULT.editUserData(newData, userId);
+    }
+
+    public boolean changePassword(String currentPassword, String newPassword, UUID userId) throws UserException, InvalidKeySpecException, NoSuchAlgorithmException {
+        String currentPasswordFromDB = USER_DEFAULT.getCurrentPasswordByUserId(userId);
+        if (currentPasswordFromDB != null) {
+            final boolean isValid = SecuredPassword.validatePassword(currentPassword, currentPasswordFromDB);
+            if (isValid) {
+                return USER_DEFAULT.changePassword(SecuredPassword.generateStrongPasswordHash(newPassword), userId);
+            }
+        }
+        return false;
+    }
+
+
+    public boolean changeUserImg(Part img, String publicId, UUID userId) throws ImageException {
+        if (IMAGE_DEFAULT.dropImgByPublicId(publicId) & IMAGE_DEFAULT.dropImgUrlFromDataBaseByPublicId(publicId)) {
+            return IMAGE_DEFAULT.saveImgUrlInDataBaseByUserID(userId, IMAGE_DEFAULT.uploadImg(img));
+        }
+        return false;
+    }
 }

@@ -12,7 +12,9 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class UserDefault implements UserDAO {
     private static volatile UserDefault instance;
@@ -152,18 +154,7 @@ public final class UserDefault implements UserDAO {
             final ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                accountUser = AccountUser.builder()
-                        .first_name(resultSet.getString("first_name"))
-                        .age(resultSet.getInt("age"))
-                        .interests(resultSet.getString("interests"))
-                        .gender(resultSet.getString("gender"))
-                        .genderpartner(resultSet.getString("genderpartner"))
-                        .aboutMe(resultSet.getString("aboutMe"))
-                        .max_distance(resultSet.getInt("max_distance"))
-                        .max_age(resultSet.getInt("max_age"))
-                        .min_age(resultSet.getInt("min_age"))
-                        .password(resultSet.getString("password"))
-                        .build();
+                accountUser = buildAccountUserByResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new UserException("Error check user's email in data base");
@@ -211,5 +202,81 @@ public final class UserDefault implements UserDAO {
         return null;
     }
 
+    @Override
+    public AccountUser editUserData(Map newData, UUID userId) throws UserException {
+        StringBuilder sql = new StringBuilder("update tinder_account set ");
+
+        sql.append(String.join(", ", (List) newData.keySet().stream().map(o -> o + " = '" + newData.get(o) + "'").collect(Collectors.toList())))
+                .append(" where user_id=")
+                .append("'")
+                .append(userId.toString())
+                .append("'");
+        AccountUser accountUser = null;
+        try (
+                final Connection connection = basicDataSource.getConnection();
+                final PreparedStatement preparedStatement = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.execute();
+            final ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                accountUser = buildAccountUserByResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UserException("Error edit user");
+        }
+        return accountUser;
+    }
+
+    public String getCurrentPasswordByUserId(UUID userId) throws UserException {
+        String sql = "select password from tinder_account where user_id=?";
+        try (
+                final Connection connection = basicDataSource.getConnection();
+                final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setObject(1, userId);
+
+            final ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("password");
+            }
+        } catch (SQLException e) {
+            throw new UserException("Error get password from in data base");
+        }
+        return null;
+    }
+
+    @Override
+    public boolean changePassword(String newPassword, UUID userId) throws UserException {
+        String sql = "update tinder_account set password=? where user_id=?";
+        try (
+                final Connection connection = basicDataSource.getConnection();
+                final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, newPassword);
+            preparedStatement.setObject(2, userId);
+
+            return !preparedStatement.execute();
+
+        } catch (SQLException e) {
+            throw new UserException("Error check user's email in data base");
+        }
+
+    }
+
+
+    private AccountUser buildAccountUserByResultSet(ResultSet resultSet) throws SQLException {
+        return AccountUser.builder()
+                .first_name(resultSet.getString("first_name"))
+                .age(resultSet.getInt("age"))
+                .interests(resultSet.getString("interests"))
+                .gender(resultSet.getString("gender"))
+                .genderpartner(resultSet.getString("genderpartner"))
+                .aboutMe(resultSet.getString("aboutme"))
+                .max_distance(resultSet.getInt("max_distance"))
+                .max_age(resultSet.getInt("max_age"))
+                .min_age(resultSet.getInt("min_age"))
+                .password(resultSet.getString("password"))
+                .build();
+    }
 
 }

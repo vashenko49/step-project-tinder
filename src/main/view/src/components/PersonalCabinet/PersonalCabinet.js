@@ -22,13 +22,16 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Slider from "@material-ui/core/Slider";
+import {bindActionCreators} from "redux";
+import * as UserAction from "../../actions/User/User";
+import {objectToFormData} from 'object-to-formdata';
 
 const useStyles = makeStyles({
     root: {
         marginTop: "10px"
     },
     card: {
-        padding: "24px",
+        padding: "15px",
         margin: 10
     },
     formControl: {
@@ -37,14 +40,14 @@ const useStyles = makeStyles({
 });
 
 
-const PersonalCabinet = ({User: {first_name, age, interests, gender,genderpartner, aboutMe, max_distance, min_age, max_age}}) => {
+const PersonalCabinet = ({User: {first_name, age, interests, gender, genderpartner, aboutMe, max_distance, min_age, max_age, imagesList}, editData, changePassword, changeImg}) => {
     const classes = useStyles();
     const [newFirstName, setNewFirstName] = useState(first_name);
     const [nameError, setNameError] = useState(false);
     const [newAge, setNewAge] = useState((_.isNull(age) || age < 18) ? 18 : age);
     const [newInterests, setNewInterests] = useState(_.isNull(interests) ? "" : interests);
     const [newGander, setNewGander] = useState(_.isNull(gender) ? "male" : gender);
-    const [newGanderPartner, setNewGanderPartner] = useState(_.isNull(gender) ? "male" : gender);
+    const [newGanderPartner, setNewGanderPartner] = useState(_.isNull(genderpartner) ? "male" : genderpartner);
     const [newAboutMe, setNewAboutMe] = useState(_.isNull(aboutMe) ? "" : aboutMe);
     const [newMaxDistance, setNewMaxDistance] = useState(_.isNull(max_distance) ? "" : max_distance);
     const [newMinAge, setNewMinAge] = useState(_.isNull(min_age) ? "" : min_age);
@@ -82,17 +85,45 @@ const PersonalCabinet = ({User: {first_name, age, interests, gender,genderpartne
 
     const onSubmitImg = e => {
         e.preventDefault();
+
+        const options = {
+            indices: true,
+            nullsAsUndefineds: true
+        };
+        const formData = objectToFormData({
+            img: pictures[0],
+            publicId: imagesList[0]
+        }, options);
+
+
+        changeImg(formData);
+        setPictures([]);
     }
     const onSubmitPassword = e => {
         e.preventDefault();
+        changePassword({
+            currentPassword: password,
+            newPassword: newPassword
+        })
     }
     const onSubmitPersonalData = e => {
         e.preventDefault();
+        editData({
+            first_name: newFirstName,
+            age: newAge,
+            interests: newInterests,
+            gender: newGander,
+            genderpartner: newGanderPartner,
+            aboutme: newAboutMe,
+            max_distance: newMaxDistance,
+            min_age: newMinAge,
+            max_age: newMaxAge
+        })
     }
     return (
         <Container className={classes.root}>
             <Grid container>
-                <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                <Grid item xl={8} lg={8} md={8} sm={12} xs={12}>
                     <Card className={classes.card}>
                         <CardContent>
                             <Typography variant={"h5"}>
@@ -259,7 +290,7 @@ const PersonalCabinet = ({User: {first_name, age, interests, gender,genderpartne
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                <Grid item xl={4} lg={4} md={4} sm={12} xs={12}>
                     <Card className={classes.card}>
                         <CardContent>
                             <Typography variant={"h5"}>
@@ -295,6 +326,16 @@ const PersonalCabinet = ({User: {first_name, age, interests, gender,genderpartne
 
 const mapStateToProps = (state) => {
     return {User: state.User};
-}
+};
 
-export default connect(mapStateToProps, null)(PersonalCabinet);
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        editData: bindActionCreators(UserAction.editData, dispatch),
+        changePassword: bindActionCreators(UserAction.changePassword, dispatch),
+        changeImg: bindActionCreators(UserAction.changeImg, dispatch),
+    };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(PersonalCabinet);

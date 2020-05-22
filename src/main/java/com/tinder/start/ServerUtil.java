@@ -2,7 +2,8 @@ package com.tinder.start;
 
 import com.tinder.controller.*;
 import com.tinder.exception.ErrorConnectionToDataBase;
-import com.tinder.filter.CheckJWT;
+import com.tinder.filter.CheckJwtFilter;
+import com.tinder.filter.UserEditDataFilter;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -10,9 +11,7 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
@@ -60,9 +59,13 @@ public final class ServerUtil {
         handler.addServlet(LoginController.class, "/api/v0/login");
         handler.addServlet(MessagesController.class, "/api/v0/messages");
         handler.addServlet(UserController.class, "/api/v0/users");
+        handler.addServlet(UserImgController.class, "/api/v0/users/img");
+        handler.addServlet(UserPasswordController.class, "/api/v0/users/password");
         handler.addServlet(GoogleSignUpController.class, "/api/v0/google-sign-up");
         handler.addServlet(GoogleSignInController.class, "/api/v0/google-sign-in");
-        handler.addFilter(CheckJWT.class, "*", EnumSet.of(DispatcherType.REQUEST));
+
+        handler.addFilter(CheckJwtFilter.class, "*", EnumSet.of(DispatcherType.REQUEST));
+        handler.addFilter(UserEditDataFilter.class, "*", EnumSet.of(DispatcherType.REQUEST));
 
 
         try {

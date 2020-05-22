@@ -57,9 +57,13 @@ public final class UtilJWT {
                 .compact();
     }
 
-    public boolean verifyToken(String jwt)throws SignatureException, ExpiredJwtException {
-        final Claims body = Jwts.parserBuilder().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY)).build().parseClaimsJws(jwt).getBody();
-        return body.getExpiration().after(new Date());
+    public boolean verifyToken(String jwt)throws SignatureException {
+        try {
+            final Claims body = Jwts.parserBuilder().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY)).build().parseClaimsJws(jwt).getBody();
+            return body.getExpiration().after(new Date());
+        }catch (ExpiredJwtException e ){
+            return false;
+        }
     }
 
     public String getUserFromToken(String jwt) {

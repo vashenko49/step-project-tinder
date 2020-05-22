@@ -5,6 +5,8 @@ import com.tinder.exception.UserException;
 import com.tinder.model.AccountUser;
 import javafx.util.Pair;
 
+import javax.servlet.http.Part;
+import java.util.Map;
 import java.util.UUID;
 
 public interface UserDAO {
@@ -21,4 +23,10 @@ public interface UserDAO {
     AccountUser getUserDataByUserId(UUID userId) throws UserException, ImageException;
 
     Pair<String, String> getUserIdAndPasswordByEmail(String email) throws UserException;
+
+    AccountUser editUserData(Map newData,  UUID userId) throws UserException;
+
+    boolean changePassword(String newPassword, UUID userId) throws UserException;
+
+
 }

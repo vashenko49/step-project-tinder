@@ -13,10 +13,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
-@WebFilter(urlPatterns = {"*/chat", "*/liked", "*/messages", "*/users"})
-public class CheckJWT implements Filter {
+@WebFilter(urlPatterns = {"*/chat", "*/liked", "*/messages", "*/users", "*/password","*/img"})
+public class CheckJwtFilter implements Filter {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -31,20 +30,28 @@ public class CheckJWT implements Filter {
         servletResponse.setCharacterEncoding("UTF-8");
         try {
             final UtilJWT UTIL_JWT = UtilJWT.getInstance();
-            String jwt = Arrays.stream(request.getCookies())
-                    .filter(c -> c.getName().equals("oauth"))
-                    .findFirst()
-                    .map(Cookie::getValue)
-                    .orElse(null);
+            String jwt = null;
 
-            if (jwt != null & UTIL_JWT.verifyToken(jwt)) {
+            for (Cookie cookie : request.getCookies()) {
+                if ((cookie == null) || (cookie.getName() == null)) {
+                    continue;
+                }
+
+                if (cookie.getName().equals("oauth")) {
+                    jwt = cookie.getValue();
+                }
+            }
+
+            if (jwt != null && UTIL_JWT.verifyToken(jwt)) {
+                request.setAttribute("jwt", jwt);
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {
                 response.setStatus(401);
                 servletResponse.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(400).message("JWt is not valid").build()));
             }
 
-        } catch (ConfigFileException | SignatureException | ServletException| ExpiredJwtException e) {
+        } catch (ConfigFileException | SignatureException | ServletException | ExpiredJwtException e) {
+            e.printStackTrace();
             response.setStatus(500);
             servletResponse.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(400).message("Parsing error").build()));
         }

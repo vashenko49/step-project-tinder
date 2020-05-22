@@ -161,6 +161,7 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
         <div className={classes.grow}>
             <AppBar position="static">
                 <Toolbar>
+                    <Avatar variant={"square"} alt={"Icon"} src={"/favicon.ico"}/>
                     <Typography className={classes.title} variant="h6" noWrap>
                         <StyledLink className={classes.mainLink} to={"/"}>
                             Step project tinder

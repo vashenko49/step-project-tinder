@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface ImageDAO {
     String uploadImgUseUri(String uri) throws ImageException;
 
-    public String uploadImg(Part file) throws ImageException;
+    String uploadImg(Part file) throws ImageException;
 
     boolean dropImgByPublicId(String publicId) throws ImageException;
 
