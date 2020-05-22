@@ -1,20 +1,12 @@
 package com.tinder.start;
 
-import com.tinder.controller.*;
+
+import com.tinder.exception.ConfigFileException;
 import com.tinder.exception.ErrorConnectionToDataBase;
-import com.tinder.filter.CheckJwtFilter;
-import com.tinder.filter.UserEditDataFilter;
-import lombok.SneakyThrows;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import javax.servlet.DispatcherType;
-import java.util.EnumSet;
 
 public final class ServerUtil {
 
@@ -24,7 +16,7 @@ public final class ServerUtil {
     private ServerUtil() {
     }
 
-    public static ServerUtil getInstance() {
+    public static ServerUtil getInstance() throws Exception {
         if (instance == null) {
             synchronized (ServerUtil.class) {
                 if (instance == null) {
@@ -36,8 +28,8 @@ public final class ServerUtil {
         return instance;
     }
 
-    @SneakyThrows
-    private void startServer() {
+
+    private void startServer() throws Exception {
         long t = System.currentTimeMillis();
         server = new Server(8080);
         ResourceHandler resourceHandler = new ResourceHandler();
@@ -47,27 +39,6 @@ public final class ServerUtil {
         GzipHandler gzip = new GzipHandler();
         server.setHandler(gzip);
 
-        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resourceHandler, handler, new DefaultHandler()});
-        gzip.setHandler(handlers);
-
-
-        handler.addServlet(ChatController.class, "/api/v0/chat");
-        handler.addServlet(LikedController.class, "/api/v0/liked");
-        handler.addServlet(LoginController.class, "/api/v0/login");
-        handler.addServlet(MessagesController.class, "/api/v0/messages");
-        handler.addServlet(UserController.class, "/api/v0/users");
-        handler.addServlet(UserImgController.class, "/api/v0/users/img");
-        handler.addServlet(UserPasswordController.class, "/api/v0/users/password");
-        handler.addServlet(GoogleSignUpController.class, "/api/v0/google-sign-up");
-        handler.addServlet(GoogleSignInController.class, "/api/v0/google-sign-in");
-
-        handler.addFilter(CheckJwtFilter.class, "*", EnumSet.of(DispatcherType.REQUEST));
-        handler.addFilter(UserEditDataFilter.class, "*", EnumSet.of(DispatcherType.REQUEST));
-
-
         try {
             ConfigFile.getInstance();
             DataSource.getDataSource();
@@ -75,7 +46,7 @@ public final class ServerUtil {
             server.join();
 
             System.out.println(System.currentTimeMillis() - t);
-        } catch (ErrorConnectionToDataBase | Exception errorConnectionToDataBase) {
+        } catch (ErrorConnectionToDataBase | Exception | ConfigFileException errorConnectionToDataBase) {
             errorConnectionToDataBase.printStackTrace();
             stop();
         }

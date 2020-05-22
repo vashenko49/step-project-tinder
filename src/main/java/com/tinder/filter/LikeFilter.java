@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-@WebFilter(urlPatterns = {"*/password"})
-public class UserChangePasswordFilter implements Filter {
+@WebFilter(urlPatterns = "*/liked")
+public class LikeFilter implements Filter {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -28,21 +28,22 @@ public class UserChangePasswordFilter implements Filter {
         response.setCharacterEncoding("UTF-8");
         try {
             String method = request.getMethod();
-            if (method.equals("PUT")) {
-                final String JSON = FilterUtil.getStringBody(request).toString();
+            final String JSON = FilterUtil.getStringBody(request).toString();
+            if (!JSON.isEmpty()) {
                 Map map = objectMapper.readValue(JSON, Map.class);
-
-                if (map.containsKey("currentPassword") && map.containsKey("newPassword")) {
-                    request.setAttribute("userData", map);
+                if (method.equals("GET")) {
                     filterChain.doFilter(servletRequest, servletResponse);
-                } else {
-                    response.setStatus(422);
-                    response.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(422).message("Current password and new password name is require").build()));
+                } else if (method.equals("POST")) {
+                    if (map.containsKey("partner") && map.containsKey("result")) {
+                        request.setAttribute("userData", map);
+                        filterChain.doFilter(servletRequest, servletResponse);
+                    } else {
+                        response.setStatus(422);
+                        response.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(422).message("partner and result name is require").build()));
+                    }
                 }
-            } else {
-                filterChain.doFilter(servletRequest, servletResponse);
             }
-        } catch (IOException | ServletException e) {
+        } catch (ServletException | IOException e) {
             response.setStatus(500);
             response.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(500).message("Server error").build()));
         }

@@ -5,19 +5,24 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
 public class AccountUser {
-    private final String first_name;
-    private final int age;
-    private final String interests;
-    private final String gender;
-    private final String genderpartner;
-    private final String aboutMe;
-    private final int max_distance;
-    private final int min_age;
-    private final int max_age;
-    @JsonIgnore private final String password;
+    private String first_name;
+    private int age;
+    private String interests;
+    private String gender;
+    private String genderpartner;
+    private String aboutMe;
+    private int max_distance;
+    private int min_age;
+    private int max_age;
+    @JsonIgnore
+    private String password;
     private List<String> imagesList;
+    private String img_url;
+    @JsonIgnore
+    private UUID userId;
 }

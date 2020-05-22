@@ -25,6 +25,8 @@ import Slider from "@material-ui/core/Slider";
 import {bindActionCreators} from "redux";
 import * as UserAction from "../../actions/User/User";
 import {objectToFormData} from 'object-to-formdata';
+import Avatar from "@material-ui/core/Avatar";
+import {Image} from "cloudinary-react";
 
 const useStyles = makeStyles({
     root: {
@@ -36,6 +38,11 @@ const useStyles = makeStyles({
     },
     formControl: {
         margin: "15px 0"
+    },
+    userAvatar: {
+        marginTop: "25px",
+        width:"100%",
+        height:"auto"
     }
 });
 
@@ -130,39 +137,47 @@ const PersonalCabinet = ({User: {first_name, age, interests, gender, genderpartn
                                 Edit personal data
                             </Typography>
                             <form onSubmit={onSubmitPersonalData} noValidate={false} autoComplete="off">
-                                <FormControl variant="outlined" className={classes.formControl} fullWidth={true}
-                                             error={nameError}>
-                                    <TextField
-                                        label={"Enter new name"}
-                                        id={"enter-name"}
-                                        value={newFirstName}
-                                        onChange={e => {
-                                            setNewFirstName(e.target.value);
-                                            setNameError(false)
-                                        }}
-                                        aria-describedby={"enter-name-helper"}
-                                    />
-                                    <FormHelperText
-                                        id={"enter-name-helper"}>{nameError && "Name is require"}</FormHelperText>
-                                </FormControl>
-                                <FormControl className={classes.formControl} fullWidth={true}>
-                                    <TextField
-                                        label={"Enter new interest"}
-                                        id="enter-interest"
-                                        multiline
-                                        value={newInterests}
-                                        onChange={e => setNewInterests(e.target.value)}
-                                    />
-                                </FormControl>
-                                <FormControl className={classes.formControl} fullWidth={true}>
-                                    <TextField
-                                        label={"Enter new about you"}
-                                        id="enter-about-me"
-                                        multiline
-                                        value={newAboutMe}
-                                        onChange={e => setNewAboutMe(e.target.value)}
-                                    />
-                                </FormControl>
+                                <Grid container spacing={2}>
+                                    <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
+                                        {imagesList.length > 0 &&
+                                        <Avatar  className={classes.userAvatar} component={Image} publicId={imagesList[0]}/>}
+                                    </Grid>
+                                    <Grid item xl={9} lg={9} md={9} sm={9} xs={12}>
+                                        <FormControl variant="outlined" className={classes.formControl} fullWidth={true}
+                                                     error={nameError}>
+                                            <TextField
+                                                label={"Enter new name"}
+                                                id={"enter-name"}
+                                                value={newFirstName}
+                                                onChange={e => {
+                                                    setNewFirstName(e.target.value);
+                                                    setNameError(false)
+                                                }}
+                                                aria-describedby={"enter-name-helper"}
+                                            />
+                                            <FormHelperText
+                                                id={"enter-name-helper"}>{nameError && "Name is require"}</FormHelperText>
+                                        </FormControl>
+                                        <FormControl className={classes.formControl} fullWidth={true}>
+                                            <TextField
+                                                label={"Enter new interest"}
+                                                id="enter-interest"
+                                                multiline
+                                                value={newInterests}
+                                                onChange={e => setNewInterests(e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormControl className={classes.formControl} fullWidth={true}>
+                                            <TextField
+                                                label={"Enter new about you"}
+                                                id="enter-about-me"
+                                                multiline
+                                                value={newAboutMe}
+                                                onChange={e => setNewAboutMe(e.target.value)}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
                                 <FormControl component="fieldset" className={classes.formControl} fullWidth={true}>
                                     <FormLabel component="legend">Gender</FormLabel>
                                     <RadioGroup aria-label="gender" name="gender1" value={newGander}

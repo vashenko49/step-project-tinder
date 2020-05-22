@@ -60,7 +60,6 @@ public class UserImgController extends HttpServlet {
         } catch (IOException | ServletException | ImageException e) {
             resp.setStatus(500);
             resp.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(500).message("Error server").build()));
-            ;
         }
     }
 }
