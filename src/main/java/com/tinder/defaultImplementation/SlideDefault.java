@@ -3,7 +3,6 @@ package com.tinder.defaultImplementation;
 import com.tinder.dao.SlidedDAO;
 import com.tinder.exception.ErrorConnectionToDataBase;
 import com.tinder.exception.SlideException;
-import com.tinder.exception.UserException;
 import com.tinder.model.AccountUser;
 import com.tinder.start.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -60,19 +59,15 @@ public class SlideDefault implements SlidedDAO {
 
         if (accountUser != null && accountUser.getGenderpartner() != null) {
 
-            sql = "select ta.first_name as first_name, " +
-                    "ta.age as age, " +
-                    "ta.interests as interests, " +
-                    "ta.aboutme as aboutme, " +
-                    "ia.img_url as img_url  " +
+
+            sql = "select first_name, age, interests, aboutme, img_url, user_id " +
                     "from tinder_account as ta " +
-                    "left join slided s on ta.user_id = s.second_like " +
-                    "left join images_account ia on ta.user_id = ia.tinder_account_id " +
-                    "where s.second_like IS NULL " +
-                    "and ta.user_id!=? " +
-                    "and ta.gender=? " +
-                    "and ta.age >? " +
-                    "and ta.age<?";
+                    "join images_account ia on ta.user_id = ia.tinder_account_id " +
+                    "where user_id not in (select second_like from slided where first_like = ?) " +
+                    "  and gender = ? " +
+                    "  and age >= ? " +
+                    "  and age <= ? " +
+                    "limit 10; ";
             try (
                     final Connection connection = basicDataSource.getConnection();
                     final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -91,6 +86,7 @@ public class SlideDefault implements SlidedDAO {
                             .interests(resultSet.getString("interests"))
                             .aboutMe(resultSet.getString("aboutme"))
                             .img_url(resultSet.getString("img_url"))
+                            .userId(resultSet.getString("user_id"))
                             .build());
                 }
 
@@ -104,14 +100,15 @@ public class SlideDefault implements SlidedDAO {
     @Override
     public List<AccountUser> getMatch(UUID userId) throws SlideException {
         List<AccountUser> accountUsers = new ArrayList<>();
-        String sql = "select first_name, age, interests, aboutme, img_url " +
+        String sql = "select user_id, first_name, age, interests, aboutme, img_url " +
                 "from slided as s1 " +
                 "full outer join slided as s2 on s1.second_like=s2.first_like " +
                 "right join tinder_account ta on s1.second_like = ta.user_id " +
                 "left join images_account ia on ta.user_id = ia.tinder_account_id " +
                 "where s1.first_like=? " +
                 "and s1.result=true " +
-                "and s2.result=true";
+                "and s2.result=true " +
+                "group by user_id, img_url";
         try (
                 final Connection connection = basicDataSource.getConnection();
                 final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -125,6 +122,7 @@ public class SlideDefault implements SlidedDAO {
                         .interests(resultSet.getString("interests"))
                         .aboutMe(resultSet.getString("aboutme"))
                         .img_url(resultSet.getString("img_url"))
+                        .userId(resultSet.getString("user_id"))
                         .build());
             }
         } catch (SQLException e) {
@@ -136,10 +134,10 @@ public class SlideDefault implements SlidedDAO {
     @Override
     public boolean slideAndIsMatch(UUID userId, UUID partner, boolean result) throws SlideException {
         boolean isMatch = false;
-        String sql = "insert into slided(first_like, second_like, result) VALUES (first_like=?, second_like=?,result=?)";
+        String sql = "insert into slided(first_like, second_like, result) VALUES (?, ?,?)";
         try (
                 final Connection connection = basicDataSource.getConnection();
-                final PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setObject(1, userId);
             preparedStatement.setObject(2, partner);

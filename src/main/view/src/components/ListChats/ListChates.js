@@ -1,11 +1,11 @@
 import React from 'react';
 
-const SlidePartner = () => {
+const ListChats = () => {
     return (
         <div>
-            
+
         </div>
     );
 };
 
-export default SlidePartner;
+export default ListChats;

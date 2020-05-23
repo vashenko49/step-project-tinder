@@ -28,21 +28,20 @@ public class LikeFilter implements Filter {
         response.setCharacterEncoding("UTF-8");
         try {
             String method = request.getMethod();
-            final String JSON = FilterUtil.getStringBody(request).toString();
-            if (!JSON.isEmpty()) {
+            if (method.equals("GET")) {
+                filterChain.doFilter(servletRequest, servletResponse);
+            } else if (method.equals("POST")) {
+                final String JSON = FilterUtil.getStringBody(request).toString();
                 Map map = objectMapper.readValue(JSON, Map.class);
-                if (method.equals("GET")) {
+                if (!JSON.isEmpty() && map.containsKey("partner") && map.containsKey("result")) {
+                    request.setAttribute("userData", map);
                     filterChain.doFilter(servletRequest, servletResponse);
-                } else if (method.equals("POST")) {
-                    if (map.containsKey("partner") && map.containsKey("result")) {
-                        request.setAttribute("userData", map);
-                        filterChain.doFilter(servletRequest, servletResponse);
-                    } else {
-                        response.setStatus(422);
-                        response.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(422).message("partner and result name is require").build()));
-                    }
+                } else {
+                    response.setStatus(422);
+                    response.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(422).message("partner and result name is require").build()));
                 }
             }
+
         } catch (ServletException | IOException e) {
             response.setStatus(500);
             response.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(500).message("Server error").build()));

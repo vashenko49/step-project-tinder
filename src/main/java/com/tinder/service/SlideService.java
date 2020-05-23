@@ -4,7 +4,9 @@ import com.tinder.defaultImplementation.SlideDefault;
 
 import com.tinder.exception.ErrorConnectionToDataBase;
 import com.tinder.exception.SlideException;
+import com.tinder.model.AccountUser;
 
+import java.util.List;
 import java.util.UUID;
 
 public class SlideService {
@@ -28,5 +30,13 @@ public class SlideService {
 
     public boolean slideAndIsMatch(UUID userId, UUID partner, boolean result) throws SlideException {
         return SLIDE_DEFAULT.slideAndIsMatch(userId, partner, result);
+    }
+
+    public List<AccountUser> getPackUserForLike(UUID userId) throws SlideException {
+        return SLIDE_DEFAULT.getPackUserForLike(userId);
+    }
+
+    public List<AccountUser> getMatch(UUID userId) throws SlideException {
+        return SLIDE_DEFAULT.getMatch(userId);
     }
 }

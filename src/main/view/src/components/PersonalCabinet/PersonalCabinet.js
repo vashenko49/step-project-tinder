@@ -140,7 +140,8 @@ const PersonalCabinet = ({User: {first_name, age, interests, gender, genderpartn
                                 <Grid container spacing={2}>
                                     <Grid item xl={3} lg={3} md={3} sm={3} xs={12}>
                                         {imagesList.length > 0 &&
-                                        <Avatar  className={classes.userAvatar} component={Image} publicId={imagesList[0]}/>}
+                                            <Image className={classes.userAvatar} publicId={imagesList[0]}/>
+                                       }
                                     </Grid>
                                     <Grid item xl={9} lg={9} md={9} sm={9} xs={12}>
                                         <FormControl variant="outlined" className={classes.formControl} fullWidth={true}

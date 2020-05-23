@@ -4,7 +4,9 @@ import ServiceUserAPI from "../../service/User";
 import _ from 'lodash';
 import Cookie from 'js-cookie';
 import * as NOTISTACK from "../../config/Notistack";
+import * as SLIDE from "../../config/Slide";
 import Oauth from "../../util/Oauth";
+import SlideAPI from "../../service/Slide";
 
 export const getUserDataByJWT = () => dispatch => {
     let oauth = Cookie.get("oauth");
@@ -26,6 +28,23 @@ export const getUserDataByJWT = () => dispatch => {
                     }
                 }
             });
+
+            SlideAPI.getPackAccountForUser()
+                .then(res => {
+                    dispatch({
+                        type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
+                        payload: {
+                            user:res,
+                            currentSlide:0
+                        }
+                    })
+                })
+                .catch(e => {
+                    dispatch({
+                        type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
+                    })
+                    throw e;
+                })
 
         }).catch(() => {
             dispatch({
@@ -80,6 +99,23 @@ export const signUpUser = (data, redirect) => dispatch => {
                             }
                         }
                     });
+
+                    SlideAPI.getPackAccountForUser()
+                        .then(res => {
+                            dispatch({
+                                type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
+                                payload: {
+                                    user:res,
+                                    currentSlide:0
+                                }
+                            })
+                        })
+                        .catch(e => {
+                            dispatch({
+                                type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
+                            })
+                            throw e;
+                        })
 
                     redirect();
 
@@ -150,6 +186,24 @@ export const signInUser = (data, redirect) => dispatch => {
                         type: USER.GET_USER_DATA_BY_JWT_SUCCESS,
                         payload: res
                     })
+
+                    SlideAPI.getPackAccountForUser()
+                        .then(res => {
+                            dispatch({
+                                type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
+                                payload: {
+                                    user:res,
+                                    currentSlide:0
+                                }
+                            })
+                        })
+                        .catch(e => {
+                            dispatch({
+                                type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
+                            })
+                            throw e;
+                        })
+
                     redirect();
                 })
                 .catch(res => {
@@ -220,6 +274,24 @@ export const editData = data => dispatch => {
                     }
                 }
             });
+
+            SlideAPI.getPackAccountForUser()
+                .then(res => {
+                    dispatch({
+                        type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
+                        payload: {
+                            user:res,
+                            currentSlide:0
+                        }
+                    })
+                })
+                .catch(e => {
+                    dispatch({
+                        type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
+                    })
+                    throw e;
+                })
+
         })
         .catch(e => {
             const {response: {data: {message}}} = e;
@@ -280,7 +352,7 @@ export const changeImg = data => dispatch => {
     });
 
     ServiceUserAPI.changeImgUser(data)
-        .then(res=>{
+        .then(res => {
             const {message} = res;
             dispatch({
                 type: NOTISTACK.ENQUEUE_SNACKBAR,
@@ -305,7 +377,7 @@ export const changeImg = data => dispatch => {
                 })
 
         })
-        .catch(e=>{
+        .catch(e => {
             const {response: {data: {message}}} = e;
             dispatch({
                 type: NOTISTACK.ENQUEUE_SNACKBAR,
@@ -316,7 +388,7 @@ export const changeImg = data => dispatch => {
                 }
             });
         })
-        .finally(()=>{
+        .finally(() => {
             dispatch({
                 type: SYSTEM.STOP_LOAD
             })

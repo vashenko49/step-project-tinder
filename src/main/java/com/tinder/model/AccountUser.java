@@ -23,6 +23,5 @@ public class AccountUser {
     private String password;
     private List<String> imagesList;
     private String img_url;
-    @JsonIgnore
-    private UUID userId;
+    private String userId;
 }

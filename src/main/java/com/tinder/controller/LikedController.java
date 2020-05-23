@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinder.exception.ConfigFileException;
 import com.tinder.exception.ErrorConnectionToDataBase;
 import com.tinder.exception.SlideException;
+import com.tinder.model.AccountUser;
 import com.tinder.model.Error;
 import com.tinder.oauth.UtilJWT;
 import com.tinder.service.SlideService;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,7 +32,15 @@ public class LikedController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
+        final UUID userID = UUID.fromString(UTIL_JWT.getUserFromToken((String) req.getAttribute("jwt")));
+        try {
+            List<AccountUser> accountUsers = SLIDE_SERVICE.getPackUserForLike(userID);
+            final String JSON = objectMapper.writeValueAsString(accountUsers);
+            resp.getWriter().print(JSON);
+        } catch (SlideException e) {
+            resp.setStatus(500);
+            resp.getWriter().print(objectMapper.writeValueAsString(Error.builder().status(500).message("Error server").build()));
+        }
     }
 
     @Override
@@ -38,7 +48,7 @@ public class LikedController extends HttpServlet {
         Map userData = (Map) req.getAttribute("userData");
         final UUID userID = UUID.fromString(UTIL_JWT.getUserFromToken((String) req.getAttribute("jwt")));
         try {
-            final boolean isMatch = SLIDE_SERVICE.slideAndIsMatch(userID, UUID.fromString((String) userData.get("partner")), Boolean.parseBoolean((String) userData.get("result")));
+            final boolean isMatch = SLIDE_SERVICE.slideAndIsMatch(userID, UUID.fromString((String) userData.get("partner")), (Boolean) userData.get("result"));
             Map<String, Boolean> result = new HashMap<>();
             result.put("result", isMatch);
             resp.getWriter().print(objectMapper.writeValueAsString(result));

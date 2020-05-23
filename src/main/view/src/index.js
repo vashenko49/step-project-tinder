@@ -23,7 +23,7 @@ const outerTheme = createMuiTheme({
 ReactDOM.render(
     <ThemeProvider theme={outerTheme}>
         <Provider store={configureStore()}>
-            <CloudinaryContext cloudName={"dxge5r7h2"}>
+            <CloudinaryContext className={"CloudinaryContext"} cloudName={"dxge5r7h2"}>
                 <SnackbarProvider>
                     <BrowserRouter>
                         <Header/>

@@ -21,11 +21,17 @@ import AddIcon from '@material-ui/icons/Add';
 import {Link} from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import {Image} from 'cloudinary-react';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+
 
 const urlParams = new URLSearchParams(window.location.search);
 const useStyles = makeStyles((theme) => ({
     grow: {
         flexGrow: 1,
+        height:"8vh",
+    },
+    heightBar:{
+        height:"8vh",
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -35,13 +41,13 @@ const useStyles = makeStyles((theme) => ({
     },
     sectionDesktop: {
         display: 'none',
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             display: 'flex',
         },
     },
     sectionMobile: {
         display: 'flex',
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             display: 'none',
         },
     },
@@ -51,6 +57,9 @@ const useStyles = makeStyles((theme) => ({
     signOut: {
         color: "white",
         marginLeft: "10px"
+    },
+    avatar:{
+        objectFit:"cover"
     }
 }));
 
@@ -94,18 +103,26 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
                                     aria-haspopup="true"
                                     color="inherit"
                                 >
-                                    {imagesList.length > 0 ? <Avatar component={Image} publicId={imagesList[0]}/> :
+                                    {imagesList.length > 0 ? <Avatar className={classes.avatar} component={Image} publicId={imagesList[0]}/> :
                                         <AccountCircle/>}
                                 </IconButton>
                                 <p>Profile</p>
                             </MenuItem>,
-                            <MenuItem key={"messages"}>
+                            <MenuItem component={Link}
+                                      to="/messenger" key={"messages"}>
                                 <IconButton aria-label="show new mails" color="inherit">
                                     <Badge badgeContent={unReadMessage} color="secondary">
                                         <MailIcon/>
                                     </Badge>
                                 </IconButton>
                                 <p>Messages</p>
+                            </MenuItem>,
+                            <MenuItem component={Link}
+                                      to="/matches" key={"matches"}>
+                                <IconButton aria-label="show new mails" color="inherit">
+                                        <FavoriteIcon/>
+                                </IconButton>
+                                <p>Matches</p>
                             </MenuItem>,
                             <MenuItem onClick={SignOut} key={"sign-out"}>
                                 <IconButton
@@ -159,8 +176,8 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
 
     return (
         <div className={classes.grow}>
-            <AppBar position="static">
-                <Toolbar>
+            <AppBar className={classes.heightBar} position="static">
+                <Toolbar className={classes.heightBar}>
                     <Avatar variant={"square"} alt={"Icon"} src={"/favicon.ico"}/>
                     <Typography className={classes.title} variant="h6" noWrap>
                         <StyledLink className={classes.mainLink} to={"/"}>
@@ -180,7 +197,7 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
                                         aria-haspopup="true"
                                         color="inherit"
                                     >
-                                        {imagesList.length > 0 ? <Avatar component={Image} publicId={imagesList[0]}/> :
+                                        {imagesList.length > 0 ? <Avatar className={classes.avatar} component={Image} publicId={imagesList[0]}/> :
                                             <AccountCircle/>}
                                     </IconButton>
                                     <Button onClick={SignOut} className={classes.signOut}>
