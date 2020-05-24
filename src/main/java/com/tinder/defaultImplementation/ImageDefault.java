@@ -2,24 +2,19 @@ package com.tinder.defaultImplementation;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.google.common.io.ByteStreams;
 import com.tinder.dao.ImageDAO;
 import com.tinder.exception.ConfigFileException;
 import com.tinder.exception.ErrorConnectionToDataBase;
 import com.tinder.exception.ImageException;
-import com.tinder.exception.UserException;
 import com.tinder.start.ConfigFile;
 import com.tinder.start.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.servlet.http.Part;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.*;
 
 

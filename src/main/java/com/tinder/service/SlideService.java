@@ -9,7 +9,7 @@ import com.tinder.model.AccountUser;
 import java.util.List;
 import java.util.UUID;
 
-public class SlideService {
+public final class SlideService {
     private static volatile SlideService instance;
     private static SlideDefault SLIDE_DEFAULT;
 

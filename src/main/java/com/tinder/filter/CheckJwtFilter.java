@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"*/chat", "*/liked", "*/messages", "*/users", "*/password","*/img","*/match"})
+@WebFilter(urlPatterns = { "*/liked", "*/users", "*/password","*/img","*/match"})
 public class CheckJwtFilter implements Filter {
     private final ObjectMapper objectMapper = new ObjectMapper();
 

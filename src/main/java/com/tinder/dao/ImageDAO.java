@@ -3,10 +3,6 @@ package com.tinder.dao;
 import com.tinder.exception.ImageException;
 
 import javax.servlet.http.Part;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 import java.util.UUID;
 
 

@@ -17,7 +17,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 import java.util.UUID;
 
-public class UserService {
+public final class UserService {
     private static volatile UserService instance;
     private final UserDefault USER_DEFAULT;
     private final ImageDefault IMAGE_DEFAULT;

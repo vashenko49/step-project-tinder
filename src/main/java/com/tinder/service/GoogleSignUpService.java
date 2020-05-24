@@ -9,7 +9,7 @@ import com.tinder.oauth.UtilJWT;
 import java.util.Map;
 import java.util.UUID;
 
-public class GoogleSignUpService {
+public final class GoogleSignUpService {
     private static volatile GoogleSignUpService instance;
     private final UserDefault USER_DEFAULT;
     private final ImageDefault IMAGE_DEFAULT;

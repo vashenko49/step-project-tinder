@@ -9,7 +9,7 @@ public class JettyServer extends JFrame {
     public static final String APPLICATION_NAME = "step-project-tinder";
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("Starting Server ..");
         ServerUtil.getInstance();
         System.out.println("Server is started");

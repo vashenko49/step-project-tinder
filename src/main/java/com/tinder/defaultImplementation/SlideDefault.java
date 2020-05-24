@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SlideDefault implements SlidedDAO {
+public final class SlideDefault implements SlidedDAO {
 
     private static volatile SlideDefault instance;
     private final BasicDataSource basicDataSource;
