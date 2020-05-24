@@ -25,7 +25,6 @@ import Slider from "@material-ui/core/Slider";
 import {bindActionCreators} from "redux";
 import * as UserAction from "../../actions/User/User";
 import {objectToFormData} from 'object-to-formdata';
-import Avatar from "@material-ui/core/Avatar";
 import {Image} from "cloudinary-react";
 
 const useStyles = makeStyles({

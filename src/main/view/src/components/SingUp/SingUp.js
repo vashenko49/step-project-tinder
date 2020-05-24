@@ -22,6 +22,9 @@ import {objectToFormData} from 'object-to-formdata';
 import * as SystemAction from "../../actions/System/System";
 
 const useStyles = makeStyles({
+    container:{
+        height:"90vh",
+    },
     root: {
         margin: "12px auto",
         maxWidth: "478px",
@@ -101,7 +104,7 @@ const SingUp = ({signUpUser, startLoad, history}) => {
         }
     }
     return (
-        <Container>
+        <Container className={classes.container}>
             <Card className={classes.root}>
                 <CardContent>
                     <Typography variant={"h5"}>

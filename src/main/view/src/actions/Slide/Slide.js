@@ -15,14 +15,23 @@ export const nextSlide = (currentSlide, currentUsers, result) => async dispatch 
 
 
     if (isMatch.result) {
-        dispatch({
-            type: NOTISTACK.ENQUEUE_SNACKBAR,
-            notification: {
-                ...{
-                    message: "You have new match"
-                }
-            }
-        });
+        SlideAPI.getUserMatch()
+            .then(res => {
+                dispatch({
+                    type: NOTISTACK.ENQUEUE_SNACKBAR,
+                    notification: {
+                        ...{
+                            message: "You have new match"
+                        }
+                    }
+                });
+                dispatch({
+                    type: SLIDE.LOAD_MATCHES,
+                    payload: res
+                })
+            })
+
+
     }
 
     if (currentSlide + 2 > currentUsers.length) {

@@ -34,8 +34,8 @@ export const getUserDataByJWT = () => dispatch => {
                     dispatch({
                         type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
                         payload: {
-                            user:res,
-                            currentSlide:0
+                            user: res,
+                            currentSlide: 0
                         }
                     })
                 })
@@ -44,6 +44,14 @@ export const getUserDataByJWT = () => dispatch => {
                         type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
                     })
                     throw e;
+                })
+
+            SlideAPI.getUserMatch()
+                .then(res => {
+                    dispatch({
+                        type: SLIDE.LOAD_MATCHES,
+                        payload: res
+                    })
                 })
 
         }).catch(() => {
@@ -105,8 +113,8 @@ export const signUpUser = (data, redirect) => dispatch => {
                             dispatch({
                                 type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
                                 payload: {
-                                    user:res,
-                                    currentSlide:0
+                                    user: res,
+                                    currentSlide: 0
                                 }
                             })
                         })
@@ -115,6 +123,14 @@ export const signUpUser = (data, redirect) => dispatch => {
                                 type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
                             })
                             throw e;
+                        })
+
+                    SlideAPI.getUserMatch()
+                        .then(res => {
+                            dispatch({
+                                type: SLIDE.LOAD_MATCHES,
+                                payload: res
+                            })
                         })
 
                     redirect();
@@ -192,8 +208,8 @@ export const signInUser = (data, redirect) => dispatch => {
                             dispatch({
                                 type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
                                 payload: {
-                                    user:res,
-                                    currentSlide:0
+                                    user: res,
+                                    currentSlide: 0
                                 }
                             })
                         })
@@ -202,6 +218,14 @@ export const signInUser = (data, redirect) => dispatch => {
                                 type: SLIDE.LOAD_USERS_FOR_LIKE_FAILED
                             })
                             throw e;
+                        })
+
+                    SlideAPI.getUserMatch()
+                        .then(res => {
+                            dispatch({
+                                type: SLIDE.LOAD_MATCHES,
+                                payload: res
+                            })
                         })
 
                     redirect();
@@ -243,11 +267,12 @@ export const SignOut = () => dispatch => {
     dispatch({
         type: SYSTEM.START_LOAD
     });
-
     dispatch({
         type: USER.SIGN_OUT
     });
-
+    dispatch({
+        type: SLIDE.SIGN_OUT
+    })
     Oauth.removeCookies();
     dispatch({
         type: SYSTEM.STOP_LOAD
@@ -280,8 +305,8 @@ export const editData = data => dispatch => {
                     dispatch({
                         type: SLIDE.LOAD_USERS_FOR_LIKE_SUCCESS,
                         payload: {
-                            user:res,
-                            currentSlide:0
+                            user: res,
+                            currentSlide: 0
                         }
                     })
                 })
@@ -292,6 +317,13 @@ export const editData = data => dispatch => {
                     throw e;
                 })
 
+            SlideAPI.getUserMatch()
+                .then(res => {
+                    dispatch({
+                        type: SLIDE.LOAD_MATCHES,
+                        payload: res
+                    })
+                })
         })
         .catch(e => {
             const {response: {data: {message}}} = e;
@@ -374,6 +406,13 @@ export const changeImg = data => dispatch => {
                         type: USER.GET_USER_DATA_BY_JET_FAILED
                     });
                     throw res;
+                })
+            SlideAPI.getUserMatch()
+                .then(res => {
+                    dispatch({
+                        type: SLIDE.LOAD_MATCHES,
+                        payload: res
+                    })
                 })
 
         })

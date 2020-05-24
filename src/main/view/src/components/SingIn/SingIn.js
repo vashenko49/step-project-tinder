@@ -22,6 +22,9 @@ import * as UserAction from "../../actions/User/User";
 import {objectToFormData} from 'object-to-formdata';
 
 const useStyles = makeStyles({
+    container:{
+        height:"90vh",
+    },
     root: {
         margin: "12px auto",
         maxWidth: "478px",
@@ -83,7 +86,7 @@ const SingIn = ({startLoad, signInUser, history}) => {
 
 
     return (
-        <Container>
+        <Container className={classes.container}>
             {_.isString(urlParams.get("message")) && <Typography align={'center'} variant="h6" color={"secondary"}>
                 {urlParams.get("message")}
             </Typography>}

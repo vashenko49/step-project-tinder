@@ -11,10 +11,14 @@ import MessageIcon from '@material-ui/icons/Message';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import Messenger from "../Messenger/Messenger";
 import ListMatches from "../ListMatches/ListMatches";
+import Container from "@material-ui/core/Container";
+import NewReleasesOutlinedIcon from '@material-ui/icons/NewReleasesOutlined';
+import Typography from "@material-ui/core/Typography";
+import StyledLink from "../StyledLink/StyledLink";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        height: "100%"
+        height: "98vh"
     },
     blockWithMessengerAndListMatches: {
         [theme.breakpoints.down('sm')]: {
@@ -23,30 +27,56 @@ const useStyles = makeStyles((theme) => ({
     },
     bottomNavigation: {
         height: "5vh"
+    },
+    rootIsNotAuthorization: {
+        height: "98vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    mainIcon: {
+        fontSize: "18rem"
     }
 }));
 
-const HomePage = () => {
+const HomePage = ({User: {isAuthorization}}) => {
     const classes = useStyles();
     const [value, setValue] = React.useState('matches');
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
     return (
-        <Grid container className={classes.root}>
-            <Grid className={classes.blockWithMessengerAndListMatches} item xl={8} lg={8} md={8} sm={12} xs={12}>
-                <BottomNavigation value={value} onChange={handleChange}>
-                    <BottomNavigationAction label="Messages" value="messages" icon={<MessageIcon/>}/>
-                    <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon/>}/>
-                </BottomNavigation>
-                {
-                    value === 'messages' ? <Messenger/> : <ListMatches/>
-                }
-            </Grid>
-            <Grid item xl={4} lg={4} md={4} sm={12} xs={12}>
-                <SlidePartner/>
-            </Grid>
-        </Grid>
+        <>
+            {
+                isAuthorization ? (<Grid container className={classes.root}>
+                    <Grid className={classes.blockWithMessengerAndListMatches} item xl={8} lg={8} md={8} sm={12}
+                          xs={12}>
+                        <BottomNavigation value={value} onChange={handleChange}>
+                            <BottomNavigationAction label="Messages" value="messages" icon={<MessageIcon/>}/>
+                            <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon/>}/>
+                        </BottomNavigation>
+                        {
+                            value === 'messages' ? <Messenger/> : <ListMatches/>
+                        }
+                    </Grid>
+                    <Grid item xl={4} lg={4} md={4} sm={12} xs={12}>
+                        <SlidePartner/>
+                    </Grid>
+                </Grid>) : (
+                    <Container className={classes.rootIsNotAuthorization}>
+                        <NewReleasesOutlinedIcon className={classes.mainIcon}/>
+                        <Typography variant="h6">
+                            Welcome to my step project tinder =). To continue working,
+                            <StyledLink to={"/sing-in"}> sign in </StyledLink>
+                            to your account or go
+                            through the  <StyledLink to={"/sing-up"}> sign up </StyledLink> process.
+                        </Typography>
+                    </Container>
+                )
+            }
+
+        </>
     );
 };
 

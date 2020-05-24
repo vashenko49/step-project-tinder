@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "6x",
         height: "22vh",
         overflow: "auto",
+        wordWrap:"break-word",
         '&::-webkit-scrollbar': {
             width: '0.4em'
         },
