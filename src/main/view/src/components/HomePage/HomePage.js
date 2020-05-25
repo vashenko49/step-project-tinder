@@ -15,6 +15,7 @@ import Container from "@material-ui/core/Container";
 import NewReleasesOutlinedIcon from '@material-ui/icons/NewReleasesOutlined';
 import Typography from "@material-ui/core/Typography";
 import StyledLink from "../StyledLink/StyledLink";
+import Badge from "@material-ui/core/Badge";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,9 +41,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const HomePage = ({User: {isAuthorization}}) => {
+const HomePage = ({User: {isAuthorization}, Messenger: {unReadMessage}}) => {
     const classes = useStyles();
-    const [value, setValue] = React.useState('matches');
+    const [value, setValue] = React.useState('messages');
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -50,10 +51,13 @@ const HomePage = ({User: {isAuthorization}}) => {
         <>
             {
                 isAuthorization ? (<Grid container className={classes.root}>
-                    <Grid className={classes.blockWithMessengerAndListMatches} item xl={8} lg={8} md={8} sm={12}
-                          xs={12}>
+                    <Grid className={classes.blockWithMessengerAndListMatches} item xl={8} lg={8} md={8} sm={12} xs={12}>
                         <BottomNavigation value={value} onChange={handleChange}>
-                            <BottomNavigationAction label="Messages" value="messages" icon={<MessageIcon/>}/>
+                            <BottomNavigationAction label="Messages" value="messages" icon={
+                                <Badge badgeContent={unReadMessage} color="secondary">
+                                    <MessageIcon/>
+                                </Badge>
+                            }/>
                             <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon/>}/>
                         </BottomNavigation>
                         {
@@ -70,7 +74,7 @@ const HomePage = ({User: {isAuthorization}}) => {
                             Welcome to my step project tinder =). To continue working,
                             <StyledLink to={"/sing-in"}> sign in </StyledLink>
                             to your account or go
-                            through the  <StyledLink to={"/sing-up"}> sign up </StyledLink> process.
+                            through the <StyledLink to={"/sing-up"}> sign up </StyledLink> process.
                         </Typography>
                     </Container>
                 )
@@ -82,7 +86,10 @@ const HomePage = ({User: {isAuthorization}}) => {
 
 
 const mapStateToProps = (state) => {
-    return {User: state.User};
+    return {
+        User: state.User,
+        Messenger: state.Messenger
+    };
 }
 
 const mapDispatchToProps = (dispatch) => {

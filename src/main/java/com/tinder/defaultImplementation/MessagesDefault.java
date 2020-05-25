@@ -77,4 +77,20 @@ public final class MessagesDefault implements MessagesDAO {
             throw new MessagesException("Error delete message");
         }
     }
+
+    @Override
+    public boolean sendMessage(UUID chatId, UUID userId, UUID receiver, String textMessage) throws MessagesException {
+        String sql = "insert into messages(from_id, tou_id, chat_id, message_text) VALUES (?,?,?,?)";
+        try (
+                final Connection connection = basicDataSource.getConnection();
+                final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setObject(1, userId);
+            preparedStatement.setObject(2, receiver);
+            preparedStatement.setObject(3, chatId);
+            preparedStatement.setString(4, textMessage);
+            return !preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new MessagesException("Error send message");
+        }
+    }
 }

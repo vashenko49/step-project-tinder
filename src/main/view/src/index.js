@@ -12,6 +12,7 @@ import {SnackbarProvider} from 'notistack';
 import Notifier from "./components/Notifier/Notifier";
 import Loader from "./components/Loader/Loader";
 import {CloudinaryContext} from "cloudinary-react";
+import 'react-chat-elements/dist/main.css';
 
 const outerTheme = createMuiTheme({
     palette: {

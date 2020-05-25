@@ -12,7 +12,8 @@ export const initialState = {
     max_distance: 10,
     min_age: 18,
     max_age: 22,
-    imagesList: []
+    imagesList: [],
+    userId:""
 }
 
 
@@ -38,6 +39,7 @@ export default (state = initialState, action) => {
                 min_age: payload.min_age,
                 max_age: payload.max_age,
                 imagesList: payload.imagesList,
+                userId: payload.userId,
             }
         case USER.EDIT_USER_DATA:
             return {

@@ -98,7 +98,7 @@ public final class ChatDefault implements ChatDAO {
                 "       ta2.first_name                                                                       as from_name, " +
                 "       ia2.img_url                                                                          as from_img_url, " +
                 "       sub_query.time_send                                                                  as time_send, " +
-                "       sub_query.message_text                                                               as message_text " +
+                "       sub_query.message_text                                                               as message_text, " +
                 "       ( select count(*) from messages where read = false and ch.chat_id = messages.chat_id ) as number_unread " +
                 "from chats as ch " +
                 "         join lateral " +
@@ -141,6 +141,7 @@ public final class ChatDefault implements ChatDAO {
 
             return chats;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new ChatException("Error get user's chats");
         }
     }

@@ -28,10 +28,10 @@ const urlParams = new URLSearchParams(window.location.search);
 const useStyles = makeStyles((theme) => ({
     grow: {
         flexGrow: 1,
-        height:"8vh",
+        height: "8vh",
     },
-    heightBar:{
-        height:"8vh",
+    heightBar: {
+        height: "8vh",
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -58,12 +58,12 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         marginLeft: "10px"
     },
-    avatar:{
-        objectFit:"cover"
+    avatar: {
+        objectFit: "cover"
     }
 }));
 
-const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserDataByJWT, SignOut}) => {
+const Header = ({User: {isAuthorization, imagesList}, getUserDataByJWT, SignOut, Messenger:{unReadMessage}}) => {
     useEffect(() => {
         if (_.isString(urlParams.get("oauth"))) {
             document.cookie = "oauth=" + urlParams.get("oauth");
@@ -103,7 +103,8 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
                                     aria-haspopup="true"
                                     color="inherit"
                                 >
-                                    {imagesList.length > 0 ? <Avatar className={classes.avatar} component={Image} publicId={imagesList[0]}/> :
+                                    {imagesList.length > 0 ? <Avatar className={classes.avatar} component={Image}
+                                                                     publicId={imagesList[0]}/> :
                                         <AccountCircle/>}
                                 </IconButton>
                                 <p>Profile</p>
@@ -120,7 +121,7 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
                             <MenuItem component={Link}
                                       to="/matches" key={"matches"}>
                                 <IconButton aria-label="show new mails" color="inherit">
-                                        <FavoriteIcon/>
+                                    <FavoriteIcon/>
                                 </IconButton>
                                 <p>Matches</p>
                             </MenuItem>,
@@ -147,9 +148,8 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
 
                                     aria-label="show new mails"
                                     color="inherit">
-                                    <Badge badgeContent={unReadMessage} color="secondary">
-                                        <ExitToAppIcon/>
-                                    </Badge>
+
+                                    <ExitToAppIcon/>
                                 </IconButton>
                                 <p>Sign In</p>
                             </MenuItem>,
@@ -197,7 +197,8 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
                                         aria-haspopup="true"
                                         color="inherit"
                                     >
-                                        {imagesList.length > 0 ? <Avatar className={classes.avatar} component={Image} publicId={imagesList[0]}/> :
+                                        {imagesList.length > 0 ? <Avatar className={classes.avatar} component={Image}
+                                                                         publicId={imagesList[0]}/> :
                                             <AccountCircle/>}
                                     </IconButton>
                                     <Button onClick={SignOut} className={classes.signOut}>
@@ -239,7 +240,10 @@ const Header = ({User: {isAuthorization, unReadMessage, imagesList}, getUserData
 
 
 const mapStateToProps = (state) => {
-    return {User: state.User};
+    return {
+        User: state.User,
+        Messenger: state.Messenger
+    };
 }
 const mapDispatchToProps = (dispatch) => {
     return {

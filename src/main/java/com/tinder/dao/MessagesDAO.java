@@ -11,4 +11,6 @@ public interface MessagesDAO {
     List<Message> getMessagesForChat(UUID chatId, int page) throws MessagesException;
 
     boolean deleteMessage(UUID messageId) throws MessagesException;
+
+    boolean sendMessage(UUID chatId, UUID userId, UUID receiver, String textMessage) throws MessagesException;
 }

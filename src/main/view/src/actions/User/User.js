@@ -7,6 +7,7 @@ import * as NOTISTACK from "../../config/Notistack";
 import * as SLIDE from "../../config/Slide";
 import Oauth from "../../util/Oauth";
 import SlideAPI from "../../service/Slide";
+import {connect, disconnect} from '@giantmachines/redux-websocket';
 
 export const getUserDataByJWT = () => dispatch => {
     let oauth = Cookie.get("oauth");
@@ -19,6 +20,9 @@ export const getUserDataByJWT = () => dispatch => {
                 type: USER.GET_USER_DATA_BY_JWT_SUCCESS,
                 payload: res
             })
+
+
+            dispatch(connect(`ws://localhost:8080/api/v0/messages/${oauth}`))
 
             dispatch({
                 type: NOTISTACK.ENQUEUE_SNACKBAR,
@@ -107,6 +111,8 @@ export const signUpUser = (data, redirect) => dispatch => {
                             }
                         }
                     });
+
+                    dispatch(connect(`ws://localhost:8080/api/v0/messages/${jwt}`))
 
                     SlideAPI.getPackAccountForUser()
                         .then(res => {
@@ -198,6 +204,7 @@ export const signInUser = (data, redirect) => dispatch => {
                             }
                         }
                     });
+                    dispatch(connect(`ws://localhost:8080/api/v0/messages/${jwt}`))
                     dispatch({
                         type: USER.GET_USER_DATA_BY_JWT_SUCCESS,
                         payload: res
@@ -273,6 +280,7 @@ export const SignOut = () => dispatch => {
     dispatch({
         type: SLIDE.SIGN_OUT
     })
+    dispatch(disconnect());
     Oauth.removeCookies();
     dispatch({
         type: SYSTEM.STOP_LOAD

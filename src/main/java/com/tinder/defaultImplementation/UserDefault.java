@@ -276,6 +276,7 @@ public final class UserDefault implements UserDAO {
                 .max_age(resultSet.getInt("max_age"))
                 .min_age(resultSet.getInt("min_age"))
                 .password(resultSet.getString("password"))
+                .userId(resultSet.getString("user_id"))
                 .build();
     }
 
