@@ -3,5 +3,3 @@ target
 readme.md
 templates
 step-project-tinder.iml
-src/test/resources/config.properties
-src/main/resources/config.properties

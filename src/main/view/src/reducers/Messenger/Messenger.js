@@ -10,6 +10,7 @@ export const initialState = {
     chats: [],
     messages: [],
     activeChat: "",
+    receiver: "",
     page: 0
 }
 
@@ -33,7 +34,7 @@ export default (state = initialState, action) => {
                 connecting: true
             }
         case "REDUX_WEBSOCKET::MESSAGE":
-            // debugger;
+
             const payloadSocket = JSON.parse(action.payload.message);
 
             const {type} = payloadSocket;
@@ -57,12 +58,22 @@ export default (state = initialState, action) => {
                     }
                 }
                 case MESSENGER.RECEIVE_NEW_MESSAGES_IN_ACTIVE_CHAT: {
-                    const {activeChat, messages, page} = action.payload.message;
-                    return {
-                        ...state,
-                        messages: messages,
-                        activeChat: activeChat,
-                        page: page,
+                    const {activeChat, messages, page} = payloadSocket;
+
+                    if (page === 0) {
+                        return {
+                            ...state,
+                            messages: messages,
+                            activeChat: activeChat,
+                            page: page,
+                        }
+                    } else {
+                        return {
+                            ...state,
+                            activeChat: activeChat,
+                            page: page,
+                            messages: messages.concat(state.messages)
+                        }
                     }
                 }
                 case MESSENGER.ERROR_ON_SERVER:
@@ -83,10 +94,23 @@ export default (state = initialState, action) => {
                 errorMessage: "DISCONNECT"
             }
         }
+        case MESSENGER.SET_RECEIVER:
+            return {
+                ...state,
+                receiver: action.payload
+            }
         case MESSENGER.SET_ACTIVE_CHAT:
             return {
                 ...state,
                 activeChat: action.payload
+            }
+        case MESSENGER.START_NEW_CHAT:
+            return {
+                ...state,
+                activeChat: "",
+                messages: [],
+                receiver: action.payload,
+                page: 0
             }
         case MESSENGER.CHAT_SIGN_OUT:
             return initialState

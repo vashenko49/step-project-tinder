@@ -16,3 +16,7 @@ export const MAKE_READ_CHAT = "MAKE_READ_CHAT";
 
 export const ERROR_ON_SERVER = "ERROR_ON_SERVER";
 export const ERROR_TYPE = "ERROR_TYPE";
+
+export const SET_RECEIVER = "SET_RECEIVER";
+
+export const START_NEW_CHAT = "START_NEW_CHAT";

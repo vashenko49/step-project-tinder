@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import * as SlideAction from "../../actions/Slide/Slide";
+import * as MessengerAction from "../../actions/Messenger/Messenger";
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import _ from 'lodash';
 import {makeStyles} from "@material-ui/core/styles";
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-around'
     }
 }));
-const SlidePartner = ({Slide: {users, currentSlide}, nextSlide}) => {
+const SlidePartner = ({Slide: {users, currentSlide}, nextSlide, startNewChat}) => {
     const classes = useStyles();
 
     const onSlide = result => {
@@ -133,7 +134,9 @@ const SlidePartner = ({Slide: {users, currentSlide}, nextSlide}) => {
                             }} aria-label={"Dislike"}>
                                 <ThumbDownIcon fontSize={"large"}/>
                             </IconButton>
-                            <IconButton aria-label={"Message"}>
+                            <IconButton onClick={()=>{
+                                startNewChat(users[currentSlide].userId)
+                            }} aria-label={"Message"}>
                                 <MessageIcon fontSize={"large"}/>
                             </IconButton>
                             <IconButton onClick={() => {
@@ -144,7 +147,6 @@ const SlidePartner = ({Slide: {users, currentSlide}, nextSlide}) => {
                         </CardActions>
                     </Card>)
             }
-
         </div>
     );
 };
@@ -157,6 +159,7 @@ const mapStateToProps = (state) => {
 function mapDispatchToProps(dispatch) {
     return {
         nextSlide: bindActionCreators(SlideAction.nextSlide, dispatch),
+        startNewChat: bindActionCreators(MessengerAction.startNewChat, dispatch),
     };
 }
 

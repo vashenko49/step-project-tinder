@@ -99,7 +99,7 @@ public final class ChatDefault implements ChatDAO {
                 "       ia2.img_url                                                                          as from_img_url, " +
                 "       sub_query.time_send                                                                  as time_send, " +
                 "       sub_query.message_text                                                               as message_text, " +
-                "       ( select count(*) from messages where read = false and ch.chat_id = messages.chat_id ) as number_unread " +
+                "       ( select count(*) from messages where read = false and ch.chat_id = messages.chat_id  and tou_id = ? ) as number_unread " +
                 "from chats as ch " +
                 "         join lateral " +
                 "    (select ms.message_text, ms.time_send " +
@@ -120,6 +120,7 @@ public final class ChatDefault implements ChatDAO {
                 final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, user);
             preparedStatement.setObject(2, user);
+            preparedStatement.setObject(3, user);
 
             final ResultSet resultSet = preparedStatement.executeQuery();
 

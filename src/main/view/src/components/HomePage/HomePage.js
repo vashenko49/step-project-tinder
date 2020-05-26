@@ -61,7 +61,9 @@ const HomePage = ({User: {isAuthorization}, Messenger: {unReadMessage}}) => {
                             <BottomNavigationAction label="Matches" value="matches" icon={<FavoriteIcon/>}/>
                         </BottomNavigation>
                         {
-                            value === 'messages' ? <Messenger/> : <ListMatches/>
+                            value === 'messages' ? <Messenger/> : <ListMatches goToMessage={()=>{
+                                setValue("messages")
+                            }}/>
                         }
                     </Grid>
                     <Grid item xl={4} lg={4} md={4} sm={12} xs={12}>

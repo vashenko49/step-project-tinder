@@ -93,10 +93,10 @@ public class MessagesController {
     }
 
     @OnMessage
-    public void onMessage(@PathParam("oauthMessages") String clientId, String message, Session session) throws IOException {
+    public void onMessage(@PathParam("oauthMessages") String jwt, String message, Session session) throws IOException {
         try {
-            if (UTIL_JWT.verifyToken(clientId)) {
-                final String userFromTokenString = UTIL_JWT.getUserFromToken(clientId);
+            if (UTIL_JWT.verifyToken(jwt)) {
+                final String userFromTokenString = UTIL_JWT.getUserFromToken(jwt);
                 final UUID userFromToken = UUID.fromString(Objects.requireNonNull(userFromTokenString));
                 Map<String, String> map = objectMapper.readValue(message, new TypeReference<Map<String, String>>() {
                 });
@@ -129,10 +129,14 @@ public class MessagesController {
                             break;
                         case "SEND_MESSAGE":
                             final String receiver = map.get("receiver");
-                            UUID activeChatInit = UUID.fromString(map.get("chatId"));
-
-                            if (!CHAT_SERVICE.isChatWithPartner(userFromToken, UUID.fromString(receiver))) {
-                                activeChatInit = CHAT_SERVICE.createChat(userFromToken, UUID.fromString(receiver));
+                            UUID activeChatInit = null;
+                            final boolean chatId = map.containsKey("chatId");
+                            if (!chatId) {
+                                if (!CHAT_SERVICE.isChatWithPartner(userFromToken, UUID.fromString(receiver))) {
+                                    activeChatInit = CHAT_SERVICE.createChat(userFromToken, UUID.fromString(receiver));
+                                }
+                            } else {
+                                activeChatInit = UUID.fromString(map.get("chatId"));
                             }
 
                             MESSAGES_SERVICE.sendMessage(
@@ -152,13 +156,12 @@ public class MessagesController {
                             break;
                         case "MAKE_READ_CHAT":
                             final String chatID = map.get("chatID");
-                            final String receiverForRead = map.get("receiver");
+//                            final String receiverForRead = map.get("receiver");
                             CHAT_SERVICE.makeChatReadForUser(userFromToken, UUID.fromString(chatID));
-                            if (POOL_USERS.containUser(receiverForRead)) {
-                                final OperationWithUser operationByUserId2 = POOL_USERS.getOperationByUserId(receiverForRead);
-                                operationByUserId2.getUpdateMessage().operation(0);
-                                operationByUserId2.getUpdateСhat().operation();
-                            }
+
+                            final OperationWithUser operationByUserIdMadeRead = POOL_USERS.getOperationByUserId(userFromTokenString);
+                            operationByUserIdMadeRead.getUpdateMessage().operation(0);
+                            operationByUserIdMadeRead.getUpdateСhat().operation();
                             break;
                         case "DROP_MESSAGE":
                             final String receiverDrop = map.get("receiver");
@@ -184,6 +187,7 @@ public class MessagesController {
                             }
                             final OperationWithUser operationByUserIdDroperChat = POOL_USERS.getOperationByUserId(userFromTokenString);
                             operationByUserIdDroperChat.getUpdateСhat().operation();
+                            break;
                         default:
                             session.getBasicRemote()
                                     .sendText(objectMapper
@@ -192,10 +196,12 @@ public class MessagesController {
                                                     .type("ERROR_TYPE")
                                                     .message("Send correct type")
                                                     .build()));
+                            break;
                     }
                 }
             }
-        } catch (IOException | MessagesException | ChatException e) {
+        } catch (IOException | MessagesException |
+                ChatException e) {
             session.getBasicRemote()
                     .sendText(objectMapper
                             .writeValueAsString(Socket
@@ -204,15 +210,21 @@ public class MessagesController {
                                     .message(e.getMessage())
                                     .build()));
         }
+
     }
 
     @OnClose
-    public void onClose(@PathParam("oauthMessages") String clientId, Session session) throws IOException {
+    public void onClose(@PathParam("oauthMessages") String jwt, Session session) throws IOException {
+        if (UTIL_JWT.verifyToken(jwt)) {
+            POOL_USERS.dropUserFromPool(UTIL_JWT.getUserFromToken(jwt));
+        }
         System.out.println("onClose");
     }
 
     @OnError
-    public void onError(@PathParam("oauthMessages") String clientId, Session session, Throwable throwable) {
-        // Do error handling here
+    public void onError(@PathParam("oauthMessages") String jwt, Session session, Throwable throwable) {
+        if (UTIL_JWT.verifyToken(jwt)) {
+            POOL_USERS.dropUserFromPool(UTIL_JWT.getUserFromToken(jwt));
+        }
     }
 }

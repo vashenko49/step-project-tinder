@@ -11,6 +11,8 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import IconButton from "@material-ui/core/IconButton";
 import MessageIcon from "@material-ui/icons/Message";
+import {bindActionCreators} from "redux";
+import * as MessengerAction from "../../actions/Messenger/Messenger";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     partnerCard: {
         margin: "12px 0"
     },
-    buttons:{
+    buttons: {
         display: "flex",
         justifyContent: 'space-around'
     }
@@ -67,7 +69,7 @@ const breakpointColumnsObj = {
     500: 1
 };
 
-const ListMatches = ({Slide: {matches}}) => {
+const ListMatches = ({Slide: {matches}, goToMessage, startNewChat}) => {
     const classes = useStyles();
     return (
         <>
@@ -87,6 +89,7 @@ const ListMatches = ({Slide: {matches}}) => {
                     >
                         {
                             matches.map(u => {
+                                console.log(u);
                                 const {age, first_name, img_url, userId} = u;
                                 return (
                                     <Card key={userId} className={classes.partnerCard}>
@@ -101,7 +104,10 @@ const ListMatches = ({Slide: {matches}}) => {
                                             </Typography>
                                         </CardContent>
                                         <CardActions className={classes.buttons}>
-                                            <IconButton aria-label={"Message"}>
+                                            <IconButton onClick={() => {
+                                                goToMessage();
+                                                startNewChat(userId);
+                                            }} aria-label={"Message"}>
                                                 <MessageIcon fontSize={"large"}/>
                                             </IconButton>
                                         </CardActions>
@@ -121,5 +127,11 @@ const mapStateToProps = (state) => {
     return {Slide: state.Slide};
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        startNewChat: bindActionCreators(MessengerAction.startNewChat, dispatch),
+    };
+}
 
-export default connect(mapStateToProps, null)(ListMatches);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListMatches);

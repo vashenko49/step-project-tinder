@@ -38,12 +38,12 @@ public final class MessagesDefault implements MessagesDAO {
     @Override
     public List<Message> getMessagesForChat(UUID chatId, int page) throws MessagesException {
         List<Message> messages = new ArrayList<>();
-        String sql = "select * from messages where chat_id=? order by time_send desc offset ? limit 15";
+        String sql = "select *  from (select * from messages  where chat_id=? order by time_send desc offset  ? limit 45)as b order by b.time_send ;";
         try (
                 final Connection connection = basicDataSource.getConnection();
                 final PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setObject(1, chatId);
-            preparedStatement.setInt(2, page * 15);
+            preparedStatement.setInt(2, page * 45);
             final ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
