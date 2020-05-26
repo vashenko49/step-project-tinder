@@ -29,15 +29,15 @@ public class GoogleSignUpController extends HttpServlet {
             final Map<String, String> userDataUseCode = GoogleUtil.getUserDataUseCodeProfileAndEmail(code);
 
             if (GOOGLE_SERVICE.userExistByEmail(userDataUseCode.get("email"))) {
-                resp.sendRedirect("http://localhost:3000/sing-in?message=Your%20already%20have%20account");
+                resp.sendRedirect("http://tinder.vashchenko.space:8080/sing-in?message=Your%20already%20have%20account");
             } else {
                 final String JWT = GOOGLE_SERVICE.SingUpUserByGoogle(userDataUseCode);
-                resp.sendRedirect("http://localhost:3000?oauth=" + JWT);
+                resp.sendRedirect("http://tinder.vashchenko.space:8080?oauth=" + JWT);
             }
 
         } catch (ConfigFileException | GoogleException | ImageException | UserException  e) {
             System.out.println(e);
-            resp.sendRedirect("http://localhost:3000/error?error=Error%20during%20registration%2C%20via%20google.%20Try%20later");
+            resp.sendRedirect("http://tinder.vashchenko.space:8080/error?error=Error%20during%20registration%2C%20via%20google.%20Try%20later");
         }
     }
 }

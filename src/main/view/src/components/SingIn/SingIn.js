@@ -96,7 +96,7 @@ const SingIn = ({startLoad, signInUser, history}) => {
                         Sing in your account
                     </Typography>
                     <Button onClick={startLoad} className={classes.googleButton} component={Link} fullWidth={true}
-                            href={'https://accounts.google.com/o/oauth2/auth?scope=email&response_type=code&access_type=offline&redirect_uri=http://localhost:8080/api/v0/google-sign-in&client_id=206183164477-qeh7n71mhlf4au9f236fc1i8tr62r080.apps.googleusercontent.com'}
+                            href={'https://accounts.google.com/o/oauth2/auth?scope=email&response_type=code&access_type=offline&redirect_uri=http://tinder.vashchenko.space:8080/api/v0/google-sign-in&client_id=206183164477-qeh7n71mhlf4au9f236fc1i8tr62r080.apps.googleusercontent.com'}
                             variant="contained" color="primary">
                         Sing In with Google
                     </Button>

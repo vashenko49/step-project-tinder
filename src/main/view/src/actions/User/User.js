@@ -22,7 +22,7 @@ export const getUserDataByJWT = () => dispatch => {
             })
 
 
-            dispatch(connect(`ws://localhost:8080/api/v0/messages/${oauth}`))
+            dispatch(connect(`ws://tinder.vashchenko.space:8080/api/v0/messages/${oauth}`))
 
             dispatch({
                 type: NOTISTACK.ENQUEUE_SNACKBAR,
@@ -112,7 +112,7 @@ export const signUpUser = (data, redirect) => dispatch => {
                         }
                     });
 
-                    dispatch(connect(`ws://localhost:8080/api/v0/messages/${jwt}`))
+                    dispatch(connect(`ws://tinder.vashchenko.space:8080/api/v0/messages/${jwt}`))
 
                     SlideAPI.getPackAccountForUser()
                         .then(res => {
@@ -204,7 +204,7 @@ export const signInUser = (data, redirect) => dispatch => {
                             }
                         }
                     });
-                    dispatch(connect(`ws://localhost:8080/api/v0/messages/${jwt}`))
+                    dispatch(connect(`ws://tinder.vashchenko.space:8080/api/v0/messages/${jwt}`))
                     dispatch({
                         type: USER.GET_USER_DATA_BY_JWT_SUCCESS,
                         payload: res

@@ -24,21 +24,21 @@ public class GoogleSignInController extends HttpServlet {
         try {
             String code = req.getParameter("code");
             if (code == null || code.isEmpty()) {
-                resp.sendRedirect("http://localhost:3000/error?error=Google%20Access%20Issues");
+                resp.sendRedirect("http://tinder.vashchenko.space:8080/error?error=Google%20Access%20Issues");
             } else {
                 String userEmail = GoogleUtil.getEmailDataUseCode(code);
                 UUID userId = GOOGLE_SERVICE.getUserUUIDByEmail(userEmail);
                 if (userId == null) {
-                    resp.sendRedirect("http://localhost:3000/sing-up");
+                    resp.sendRedirect("http://tinder.vashchenko.space:8080/sing-up");
                 } else {
                     String JWT = GOOGLE_SERVICE.singInUserInSystem(userId);
-                    resp.sendRedirect("http://localhost:3000?oauth=" + JWT);
+                    resp.sendRedirect("http://tinder.vashchenko.space:8080?oauth=" + JWT);
                 }
             }
 
         } catch (ConfigFileException | GoogleException  | UserException e) {
             System.out.println(e);
-            resp.sendRedirect("http://localhost:3000/error?error=Error%20during%20registration%2C%20via%20google.%20Try%20later");
+            resp.sendRedirect("http://tinder.vashchenko.space:8080/error?error=Error%20during%20registration%2C%20via%20google.%20Try%20later");
         }
     }
 }
