@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 create table tinder_account
 (
     user_id           uuid      default uuid_generate_v4() primary key not null,
@@ -47,6 +49,8 @@ create table chats
 create table messages
 (
     messages_id  uuid      default uuid_generate_v4() primary key not null,
+    from_id      uuid references tinder_account (user_id)         not null,
+    tou_id       uuid references tinder_account (user_id)         not null,
     chat_id      uuid references chats (chat_id)                  not null,
     message_text text                                             not null,
     read         bool      default false                          not null,
